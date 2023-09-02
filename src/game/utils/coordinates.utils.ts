@@ -6,11 +6,12 @@ interface CoordinateModifications {
 }
 
 interface Obj extends Coordinates {
+	id: string
 	type?: TypeObject
 }
 
 export const getSideCoordinates = (
-	arr: BusyCoordinates[],
+	arr: BusyCoordinates[] | Coordinates[],
 	loops: number,
 	obj: Obj,
 	xModify?: CoordinateModifications,
@@ -35,6 +36,7 @@ export const getSideCoordinates = (
 		arr.push({
 			coordinateX: obj.coordinateX + xModification,
 			coordinateY: obj.coordinateY + yModification,
+			id: obj.id,
 			type: obj.type ?? type,
 		})
 	}

@@ -1,39 +1,56 @@
-import { Player, Tank } from '../init/player.init'
+import { Game } from '../init/game.init'
+import { Tank } from '../init/player.init'
 import { AvailableMoves, BusyCoordinates, TypeMoveButton } from '../types'
 import { getSideCoordinates } from './coordinates.utils'
 
-export const getAnotherPLayerCoordinates = (
-	player: Player,
+export const addTankCoordinates = (
+	tank: Tank,
 	busyCoordinates: BusyCoordinates[]
 ) => {
 	getSideCoordinates(
 		busyCoordinates,
 		15,
-		player,
+		tank,
 		{ byI: '+', extraCalc: '-7' },
 		{ extraCalc: '-7' }
 	)
 	getSideCoordinates(
 		busyCoordinates,
 		15,
-		player,
+		tank,
 		{ byI: '+', extraCalc: '-7' },
 		{ extraCalc: '+7' }
 	)
 	getSideCoordinates(
 		busyCoordinates,
 		15,
-		player,
+		tank,
 		{ extraCalc: '-7' },
 		{ byI: '+', extraCalc: '-7' }
 	)
 	getSideCoordinates(
 		busyCoordinates,
 		15,
-		player,
+		tank,
 		{ extraCalc: '+7' },
 		{ byI: '+', extraCalc: '-7' }
 	)
+}
+
+export const addTanksCoordinates = (
+	tanks: Tank[],
+	busyCoordinates: BusyCoordinates[]
+) => {
+	for (let i = 0; i < tanks.length; i++) {
+		if (tanks[i].lives === 0) return
+		addTankCoordinates(tanks[i], busyCoordinates)
+	}
+}
+
+export const killPlayer = (id: string, game: Game) => {
+	const p = game.p1.id === id ? game.p1 : game.p2
+	p.lives -= 1
+	p.deathCooldown = 100
 }
 
 export const getTankPosition = (tank: Tank) => ({

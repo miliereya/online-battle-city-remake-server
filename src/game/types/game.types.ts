@@ -65,6 +65,7 @@ export interface Coordinates {
 }
 
 export interface BusyCoordinates extends Coordinates {
+	id: string
 	type: TypeObject
 }
 

@@ -1,8 +1,9 @@
 import { GameObject } from '../init/game-object.init'
 import { BusyCoordinates } from '../types'
+import { mutationFilter } from './array.utils'
 import { getSideCoordinates } from './coordinates.utils'
 
-export const getBlocksSideCoordinates = (
+export const addBlocksCoordinates = (
 	gameObjects: GameObject[],
 	busyCoordinates: BusyCoordinates[]
 ) => {
@@ -29,4 +30,8 @@ export const getBlocksSideCoordinates = (
 			}
 		)
 	}
+}
+
+export const deleteBlock = (id: string, objects: GameObject[]) => {
+	mutationFilter(objects, (obj: GameObject) => obj.id !== id)
 }

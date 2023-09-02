@@ -12,13 +12,10 @@ import { v4 as uuid4 } from 'uuid'
 import { Server } from 'socket.io'
 import { CreateLobbyDto, JoinLobbyDto, publicLobbyData } from './dto'
 import { Map1 } from './maps/1'
-import { getBlocksSideCoordinates } from './utils/blocks.utils'
-import {
-	getAnotherPLayerCoordinates,
-	getTankAvailableMoves,
-} from './utils/tank.utils'
+import { addBlocksCoordinates } from './utils/blocks.utils'
+import { addTankCoordinates, getTankAvailableMoves } from './utils/tank.utils'
 import { bulletsFrameLogic } from './logics/bullet.logic'
-import { playersCooldownFrameLogic } from './logics/players.logic'
+import { playerCooldownFrameLogic } from './logics/players.logic'
 import { Bullet } from './init/bullet.init'
 import { Game } from './init/game.init'
 import { moveTank } from './logics/tank.logic'
@@ -62,20 +59,14 @@ export class GameService {
 	}
 
 	frameGame(game: Game, server: Server) {
-		// *** CHECK SPEED LOSE PER FRAME ***
-		//
-		// const frameTime = new Date().getTime()
-		// if (this.prevFrame) {
-		// 	if (this.maxPing < frameTime - this.prevFrame) {
-		// 		this.maxPing = frameTime - this.prevFrame
-		// 	}
-		// }
-		// this.prevFrame = frameTime
-		// console.log(this.maxPing)
-		const p1 = game.p1
-		const p2 = game.p2
-		playersCooldownFrameLogic(p1, p2)
-		bulletsFrameLogic(game.bullets)
+		if (!game.isPaused) {
+			const p1 = game.p1
+			const p2 = game.p2
+			playerCooldownFrameLogic(p1, 1)
+			playerCooldownFrameLogic(p2, 2)
+			bulletsFrameLogic(game)
+			bulletsFrameLogic(game)
+		}
 		server.to(game.id).emit(GameActions.frame, game)
 	}
 
@@ -90,15 +81,19 @@ export class GameService {
 			this.move(dto)
 		}
 		if (button === 'FIRE') this.fire(dto)
+		if (button === 'PAUSE') this.pause(dto.gameId)
+	}
+
+	pause(id: string) {
+		this.gameManager[id].isPaused = !this.gameManager[id].isPaused
 	}
 
 	move(dto: InputDto) {
-		const { p, objects, pAnother } = this.getGameData(
-			dto.gameId,
-			dto.player
-		)
+		const gameData = this.getGameData(dto.gameId, dto.player)
+		if (!gameData) return
+		const { p, objects, pAnother } = gameData
 
-		if (!p.isAlive) return
+		if (p.deathCooldown !== 0) return
 
 		const y = p.coordinateY
 		const x = p.coordinateX
@@ -106,8 +101,8 @@ export class GameService {
 
 		const busyCoordinates: BusyCoordinates[] = []
 
-		getBlocksSideCoordinates(objects, busyCoordinates)
-		getAnotherPLayerCoordinates(pAnother, busyCoordinates)
+		addBlocksCoordinates(objects, busyCoordinates)
+		addTankCoordinates(pAnother, busyCoordinates)
 
 		const availableMoves = getTankAvailableMoves(
 			busyCoordinates,
@@ -121,7 +116,7 @@ export class GameService {
 
 	getGameData(gameId: string, player?: string) {
 		const game = this.gameManager[gameId]
-		if (!game || game.isPaused) throw ''
+		if (!game || game.isPaused) return null
 		return {
 			game,
 			p1: game.p1,
@@ -135,9 +130,12 @@ export class GameService {
 
 	fire(dto: InputDto) {
 		const { gameId, player } = dto
-		const { game, p } = this.getGameData(gameId, player)
+		const gameData = this.getGameData(gameId, player)
+		if (!gameData) return
+		const { game, p } = gameData
+
+		if (p.deathCooldown !== 0) return
 		if (p.cooldown !== 0) return
-		if (!p.isAlive) return
 
 		const y = p.coordinateY
 		const x = p.coordinateX
@@ -145,7 +143,13 @@ export class GameService {
 
 		p.cooldown = 30
 
-		const bullet = new Bullet(x, y, direction, 'PLAYER', 1)
+		const bullet = new Bullet(
+			x,
+			y,
+			direction,
+			'PLAYER',
+			p.type === 'LVL_3' ? 2 : 1
+		)
 		game.bullets.push(bullet)
 	}
 }
