@@ -1,4 +1,4 @@
-import { BusyCoordinates, Coordinates, TypeObject } from '../types'
+import { Coordinates, TypeObject, BusyCoordinates } from '../types'
 
 interface CoordinateModifications {
 	byI?: '+' | '-'
@@ -40,4 +40,23 @@ export const getSideCoordinates = (
 			type: obj.type ?? type,
 		})
 	}
+}
+
+export const isAnyCoordinatesMatches = (
+	firstArray: BusyCoordinates[],
+	secondArray: BusyCoordinates[]
+) => {
+	for (let i = 0; i < firstArray.length; i++) {
+		const c = firstArray[i]
+		for (let l = 0; l < secondArray.length; l++) {
+			const b = secondArray[l]
+			if (
+				c.coordinateX === b.coordinateX &&
+				c.coordinateY === b.coordinateY
+			) {
+				return true
+			}
+		}
+	}
+	return false
 }

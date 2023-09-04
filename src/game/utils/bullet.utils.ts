@@ -1,10 +1,10 @@
 import { Bullet } from '../init/bullet.init'
-import { Coordinates } from '../types'
+import { BusyCoordinates } from '../types'
 import { getSideCoordinates } from './coordinates.utils'
 
-export const getBulletCoordinates = (bullet: Bullet): Coordinates[] => {
-	const { coordinateX: x, coordinateY: y, direction } = bullet
-	let bulletCoordinates: Coordinates[] = []
+export const getBulletCoordinates = (bullet: Bullet) => {
+	const { coordinateX: x, coordinateY: y, direction, id } = bullet
+	let bulletCoordinates: BusyCoordinates[] = []
 	getSideCoordinates(
 		bulletCoordinates,
 		3,
@@ -48,39 +48,36 @@ export const getBulletCoordinates = (bullet: Bullet): Coordinates[] => {
 	switch (direction) {
 		case 'TOP':
 			bulletCoordinates = [
-				{
-					coordinateX: x,
-					coordinateY: y + 2,
-				},
+				{ id, type: 'BULLET', coordinateX: x, coordinateY: y + 2 },
 				...bulletCoordinates,
 			]
 			break
 		case 'BOTTOM':
 			bulletCoordinates = [
-				{
-					coordinateX: x,
-					coordinateY: y - 2,
-				},
+				{ id, type: 'BULLET', coordinateX: x, coordinateY: y - 2 },
 				...bulletCoordinates,
 			]
 			break
 		case 'LEFT':
 			bulletCoordinates = [
-				{
-					coordinateX: x - 2,
-					coordinateY: y,
-				},
+				{ id, type: 'BULLET', coordinateX: x - 2, coordinateY: y },
 				...bulletCoordinates,
 			]
 			break
 		default:
 			bulletCoordinates = [
-				{
-					coordinateX: x + 2,
-					coordinateY: y,
-				},
+				{ id, type: 'BULLET', coordinateX: x + 2, coordinateY: y },
 				...bulletCoordinates,
 			]
 	}
 	return bulletCoordinates
+}
+
+export const addBulletsCoordinates = (
+	busyCoordinates: BusyCoordinates[],
+	bullets: Bullet[]
+) => {
+	for (let i = 0; i < bullets.length; i++) {
+		busyCoordinates.push(...getBulletCoordinates(bullets[i]))
+	}
 }

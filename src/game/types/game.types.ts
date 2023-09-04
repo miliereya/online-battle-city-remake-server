@@ -1,3 +1,4 @@
+import { GameObject } from '../init/game-object.init'
 import { Game } from '../init/game.init'
 
 export enum GameActions {
@@ -29,7 +30,7 @@ export interface InputDto {
 }
 
 export type TypeGameBLock = 'STONE' | 'BRICK' | 'WATER' | 'TREES' | 'ICE'
-export type TypeBonus = 'GRENADE' | 'HELMET' | 'SHOVEL' | 'STAR'
+export type TypeBonus = 'GRENADE' | 'HELMET' | 'SHOVEL' | 'STAR' | 'HP'
 
 export type Cell =
 	| 0
@@ -69,9 +70,25 @@ export interface BusyCoordinates extends Coordinates {
 	type: TypeObject
 }
 
+export interface Controls {
+	pause: boolean
+	fire: boolean
+	move: TypeMoveButton | null
+}
+
 export type TypeShooter = 'PLAYER' | 'ENEMY'
-export type TypeObject = TypeGameBLock | TypeBonus | TypeTank
+export type TypeObject = TypeGameBLock | TypeBonus | TypeTank | 'BULLET'
 
 export interface GameManager {
 	[key: string]: Game
+}
+
+export interface EnemyList {
+	type: TypeEnemyTank
+	bonus?: TypeBonus
+}
+
+export interface Map {
+	enemyList: EnemyList[]
+	objects: GameObject[]
 }
