@@ -1,3 +1,5 @@
+import { Bang } from '../init/bang.init'
+import { Bonus } from '../init/bonus.init'
 import { Game } from '../init/game.init'
 import { Tank } from '../init/player.init'
 import {
@@ -13,6 +15,7 @@ export const addTankCoordinates = (
 	tank: Tank,
 	busyCoordinates: BusyCoordinates[]
 ) => {
+	if (tank.deathCooldown) return
 	getSideCoordinates(
 		busyCoordinates,
 		15,
@@ -55,18 +58,30 @@ export const addTanksCoordinates = (
 
 export const killPlayer = (id: string, game: Game) => {
 	const p = game.p1.id === id ? game.p1 : game.p2
+	if (p.helmet) return
 	p.lives -= 1
 	p.deathCooldown = 100
+	game.bangs.push(new Bang('BIG', p.coordinateX, p.coordinateY))
 }
 
-export const hitEnemy = (id: string, game: Game) => {
+export const hitEnemy = (
+	id: string,
+	game: Game,
+	initiatedByGrenade = false
+) => {
 	const enemy = game.enemies.find((e: Tank) => e.id === id)
 	if (!enemy) return
 	enemy.lives--
 	if (enemy.lives === 0) {
 		if (game.enemies.length > 2 && game.enemySpawnCooldown > 20)
 			game.enemySpawnCooldown = 20
+		if (enemy.bonus) game.bonuses.push(new Bonus(enemy.bonus))
+		game.bangs.push(new Bang('BIG', enemy.coordinateX, enemy.coordinateY))
 		mutationFilter(game.enemies, (e: Tank) => e.id !== id)
+	} else {
+		if (!initiatedByGrenade) {
+			// send heavy hit sound
+		}
 	}
 }
 

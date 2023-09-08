@@ -137,10 +137,16 @@ export const enemiesSpawnLogic = (game: Game) => {
 }
 
 export const enemiesFrameLogic = (game: Game) => {
-	const { enemies, p1, p2, objects } = game
+	const { enemies, p1, p2, objects, timerBonus } = game
+
+	if (timerBonus) return
+
 	for (let i = 0; i < enemies.length; i++) {
 		const enemy = enemies[i]
-
+		if (enemy.spawnAnimation) {
+			enemy.spawnAnimation--
+			continue
+		}
 		for (let l = enemy.type === 'SPEEDY' ? 2 : 1; l > 0; l--) {
 			const {
 				nextMoves,
@@ -174,6 +180,9 @@ export const enemiesFrameLogic = (game: Game) => {
 				enemy.nextMoves = generateNextMoves()
 			}
 		}
+		if (enemy.type === 'SPEEDY') {
+			enemy.tick = enemy.tick === 1 ? 2 : 1
+		}
 		const {
 			coordinateX: x,
 			coordinateY: y,
@@ -182,7 +191,7 @@ export const enemiesFrameLogic = (game: Game) => {
 		} = enemy
 		if (
 			availableBullets !== 0 &&
-			Math.floor(Math.random() * 30 + 1) === 1
+			Math.floor(Math.random() * 23 + 1) === 1
 		) {
 			const bullet = new Bullet(x, y, direction, enemy.type, enemy.id)
 			game.bullets.push(bullet)

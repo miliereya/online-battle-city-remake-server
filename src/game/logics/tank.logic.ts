@@ -10,7 +10,7 @@ export const moveTank = (
 		case 'TOP':
 			if (availableMoves.top) {
 				tank.coordinateY += 1
-				tank.tick = tank.tick === 1 ? 2 : 1
+				if (tank.type !== 'SPEEDY') tank.tick = tank.tick === 1 ? 2 : 1
 			} else {
 				tank.direction = 'TOP'
 			}
@@ -19,7 +19,7 @@ export const moveTank = (
 		case 'BOTTOM':
 			if (availableMoves.bottom) {
 				tank.coordinateY -= 1
-				tank.tick = tank.tick === 1 ? 2 : 1
+				if (tank.type !== 'SPEEDY') tank.tick = tank.tick === 1 ? 2 : 1
 			} else {
 				tank.direction = 'BOTTOM'
 			}
@@ -28,7 +28,7 @@ export const moveTank = (
 		case 'RIGHT':
 			if (availableMoves.right) {
 				tank.coordinateX += 1
-				tank.tick = tank.tick === 1 ? 2 : 1
+				if (tank.type !== 'SPEEDY') tank.tick = tank.tick === 1 ? 2 : 1
 			} else {
 				tank.direction = 'RIGHT'
 			}
@@ -37,7 +37,7 @@ export const moveTank = (
 		default:
 			if (availableMoves.left) {
 				tank.coordinateX -= 1
-				tank.tick = tank.tick === 1 ? 2 : 1
+				if (tank.type !== 'SPEEDY') tank.tick = tank.tick === 1 ? 2 : 1
 			} else {
 				tank.direction = 'LEFT'
 			}

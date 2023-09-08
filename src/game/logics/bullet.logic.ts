@@ -1,3 +1,4 @@
+import { Bang } from '../init/bang.init'
 import { Bullet } from '../init/bullet.init'
 import { Game } from '../init/game.init'
 import { BusyCoordinates } from '../types'
@@ -23,9 +24,11 @@ export const bulletsFrameLogic = (game: Game) => {
 	addBulletsCoordinates(busyCoordinates, bullets)
 
 	for (let i = 0; i < bullets.length; i++) {
+		let willHit = false
+
 		for (let l = bullets[i].speed + 1; l !== 0; l--) {
 			const bullet = bullets[i]
-			if (!bullet) continue
+			if (!bullet || willHit) break
 			const {
 				coordinateX: x,
 				coordinateY: y,
@@ -36,12 +39,14 @@ export const bulletsFrameLogic = (game: Game) => {
 			} = bullet
 			const bulletCoordinates = getBulletCoordinates(bullet)
 
-			let willHit = false
-
 			for (let i = 0; i < bulletCoordinates.length; i++) {
+				if (!bullet || willHit) break
+
 				const { coordinateX: bulletX, coordinateY: bulletY } =
 					bulletCoordinates[i]
 				for (let l = 0; l < busyCoordinates.length; l++) {
+					if (!bullet || willHit) break
+
 					const {
 						coordinateX: busyX,
 						coordinateY: busyY,
@@ -55,7 +60,7 @@ export const bulletsFrameLogic = (game: Game) => {
 							willHit = true
 						}
 						if (type === 'STONE') {
-							if (level === 2) {
+							if (level > 1) {
 								deleteBlock(id, game.objects)
 							}
 							willHit = true
@@ -76,10 +81,18 @@ export const bulletsFrameLogic = (game: Game) => {
 							type === 'SPEEDY' ||
 							type === 'HEAVY'
 						) {
+							if (id !== shooterId) {
+								willHit = true
+							}
 							if (!isEnemy(shooter)) {
 								hitEnemy(id, game)
+								willHit = true
 							}
-							if (id !== shooterId) willHit = true
+						}
+
+						if (type === 'FLAG' && game.isFlagAlive) {
+							game.isFlagAlive = false
+							willHit = true
 						}
 
 						if (type === 'BULLET' && id !== bullet.id) {
@@ -123,8 +136,16 @@ export const bulletsFrameLogic = (game: Game) => {
 			}
 			if (willHit) {
 				mutationFilter(bullets, (b: Bullet) => b.id !== bullet.id)
+				game.bangs.push(new Bang('SMALL', x, y))
 				const tank = allTanks.find((t) => t.id === shooterId)
-				if (tank) tank.availableBullets++
+				if (tank)
+					if (tank.type !== 'LVL_0') {
+						tank.availableBullets++
+					} else {
+						if (tank.availableBullets === 0) {
+							tank.availableBullets++
+						}
+					}
 			}
 		}
 	}

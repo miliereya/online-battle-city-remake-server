@@ -29,8 +29,16 @@ export interface InputDto {
 	player: string
 }
 
-export type TypeGameBLock = 'STONE' | 'BRICK' | 'WATER' | 'TREES' | 'ICE'
-export type TypeBonus = 'GRENADE' | 'HELMET' | 'SHOVEL' | 'STAR' | 'HP'
+export type TypeGameBLock =
+	| 'STONE'
+	| 'BRICK'
+	| 'WATER'
+	| 'TREES'
+	| 'ICE'
+	| 'FLAG'
+export type TypeBonus = 'GRENADE' | 'HELMET' | 'STAR' | 'HP' | 'TIMER'
+
+export type TypeBang = 'BIG' | 'SMALL'
 
 export type Cell =
 	| 0

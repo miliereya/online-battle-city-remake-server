@@ -15,6 +15,8 @@ export class Tank extends Coordinates {
 	type: TypeTank
 	speed: 1 | 2
 	availableBullets: 0 | 1 | 2 | 3
+	deathCooldown = 0
+	spawnAnimation = 50
 	lives: 0 | 1 | 2 | 3
 	bonus?: TypeBonus
 	nextMoves?: nextMoves
@@ -59,9 +61,8 @@ export class Tank extends Coordinates {
 }
 
 export class Player extends Tank {
-	deathCooldown: number
+	helmet = 120
 	constructor(side: 'left' | 'right', id: string) {
-		super(side, 'LVL_0', id)
-		this.deathCooldown = 0
+		super(side, 'LVL_2', id)
 	}
 }

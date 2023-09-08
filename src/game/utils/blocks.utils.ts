@@ -9,7 +9,7 @@ export const addBlocksCoordinates = (
 ) => {
 	for (let i = 0; i < gameObjects.length; i++) {
 		const obj = gameObjects[i]
-		if (obj.type === 'TREES') continue
+		if (obj.type === 'TREES' || obj.type === 'ICE') continue
 		getSideCoordinates(busyCoordinates, 8, obj, { byI: '+' })
 		getSideCoordinates(
 			busyCoordinates,

@@ -12,6 +12,10 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 
 	const { enemies, objects } = game
 
+	if (p.spawnAnimation) {
+		p.spawnAnimation--
+	}
+
 	if (controller.pause) {
 		game.isPaused = !game.isPaused
 		controller.pause = false
@@ -19,9 +23,14 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 
 	if (game.isPaused) return
 
+	if (p.helmet !== 0) p.helmet--
+
 	if (p.deathCooldown === 1) {
 		p.type = 'LVL_0'
 		p.direction = 'TOP'
+		p.availableBullets = 1
+		p.spawnAnimation = 50
+		p.helmet = 120
 		p.coordinateX = num === 1 ? 37 : 157
 		p.coordinateY = 7
 	}
@@ -31,8 +40,12 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 
 	if (controller.fire) {
 		controller.fire = false
-		if (p.deathCooldown !== 0) return
-		if (p.availableBullets === 0) return
+		if (
+			p.deathCooldown !== 0 ||
+			p.availableBullets === 0 ||
+			p.spawnAnimation
+		)
+			return
 
 		const y = p.coordinateY
 		const x = p.coordinateX
@@ -44,7 +57,7 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 	}
 
 	if (controller.move) {
-		if (p.deathCooldown !== 0) {
+		if (p.deathCooldown !== 0 || p.spawnAnimation) {
 			controller.move = null
 			return
 		}
