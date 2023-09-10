@@ -12,7 +12,7 @@ import { Socket, Server } from 'socket.io'
 @WebSocketGateway({
 	cors: {
 		credentials: true,
-		origin: 'http://localhost:3000',
+		origin: 'https://portfolio-client-eosin.vercel.app',
 	},
 })
 export class GameGateway {
