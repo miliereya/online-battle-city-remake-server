@@ -2,7 +2,7 @@ import { EnemyList1 } from '../enemies-list/easy.enemy-list'
 import { GameObject } from '../init/game-object.init'
 import { Map } from '../types'
 
-export const Map1 = (): Map => ({
+export const Map3 = (): Map => ({
 	objects: [
 		new GameObject('FLAG', 12, 0),
 		new GameObject('FLAG', 12, 1),
@@ -12,14 +12,6 @@ export const Map1 = (): Map => ({
 		new GameObject('BRICK', 12, 2),
 		new GameObject('BRICK', 13, 2),
 		new GameObject('BRICK', 14, 2),
-		new GameObject('BRICK', 11, 3),
-		new GameObject('BRICK', 12, 3),
-		new GameObject('BRICK', 13, 3),
-		new GameObject('BRICK', 14, 3),
-		new GameObject('BRICK', 11, 4),
-		new GameObject('BRICK', 12, 4),
-		new GameObject('BRICK', 13, 4),
-		new GameObject('BRICK', 14, 4),
 		new GameObject('BRICK', 11, 0),
 		new GameObject('BRICK', 11, 1),
 		new GameObject('BRICK', 14, 0),
@@ -36,14 +28,6 @@ export const Map1 = (): Map => ({
 		new GameObject('STONE', 14, 5),
 		new GameObject('STONE', 15, 4),
 		new GameObject('STONE', 15, 5),
-		new GameObject('TREES', 16, 4),
-		new GameObject('TREES', 16, 5),
-		new GameObject('TREES', 17, 4),
-		new GameObject('TREES', 17, 5),
-		new GameObject('ICE', 18, 4),
-		new GameObject('ICE', 18, 5),
-		new GameObject('ICE', 19, 4),
-		new GameObject('ICE', 19, 5),
 	],
 	enemyList: [...EnemyList1],
 })

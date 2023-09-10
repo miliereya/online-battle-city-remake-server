@@ -28,7 +28,7 @@ export class Tank extends Coordinates {
 	) {
 		let x: number
 		if (id) {
-			x = side === 'left' ? 37 : 157
+			x = side === 'left' ? 71 : 136
 		} else {
 			if (side === 'left') {
 				x = 7

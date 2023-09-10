@@ -2,7 +2,11 @@ import { Bullet } from '../init/bullet.init'
 import { Game } from '../init/game.init'
 import { BusyCoordinates } from '../types'
 import { addBlocksCoordinates } from '../utils/blocks.utils'
-import { addTanksCoordinates, getTankAvailableMoves } from '../utils/tank.utils'
+import {
+	addTankCoordinates,
+	addTanksCoordinates,
+	getTankAvailableMoves,
+} from '../utils/tank.utils'
 import { moveTank } from './tank.logic'
 
 export const playerFrameLogic = (game: Game, num: 1 | 2) => {
@@ -17,6 +21,7 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 	}
 
 	if (controller.pause) {
+		if (!game.isPaused) game.sounds.pause = true
 		game.isPaused = !game.isPaused
 		controller.pause = false
 	}
@@ -31,7 +36,7 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 		p.availableBullets = 1
 		p.spawnAnimation = 50
 		p.helmet = 120
-		p.coordinateX = num === 1 ? 37 : 157
+		p.coordinateX = num === 1 ? 71 : 136
 		p.coordinateY = 7
 	}
 	if (p.deathCooldown > 0) {
@@ -40,11 +45,7 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 
 	if (controller.fire) {
 		controller.fire = false
-		if (
-			p.deathCooldown !== 0 ||
-			p.availableBullets === 0 ||
-			p.spawnAnimation
-		)
+		if (p.deathCooldown || p.availableBullets === 0 || p.spawnAnimation)
 			return
 
 		const y = p.coordinateY
@@ -52,6 +53,7 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 		const direction = p.direction
 
 		const bullet = new Bullet(x, y, direction, p.type, p.id)
+		game.sounds.shoot = true
 		game.bullets.push(bullet)
 		p.availableBullets--
 	}
@@ -69,7 +71,10 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 		const busyCoordinates: BusyCoordinates[] = []
 
 		addBlocksCoordinates(objects, busyCoordinates)
-		addTanksCoordinates([...enemies, pAnother], busyCoordinates)
+		addTanksCoordinates([...enemies], busyCoordinates)
+		if (pAnother.lives && !pAnother.deathCooldown) {
+			addTankCoordinates(pAnother, busyCoordinates)
+		}
 
 		const availableMoves = getTankAvailableMoves(
 			busyCoordinates,
@@ -79,6 +84,7 @@ export const playerFrameLogic = (game: Game, num: 1 | 2) => {
 		)
 
 		moveTank(availableMoves, controller.move, p)
+		game.sounds.player_move = true
 		controller.move = null
 	}
 }

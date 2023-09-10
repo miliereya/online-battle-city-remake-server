@@ -1,7 +1,7 @@
 import { Bang } from '../init/bang.init'
 import { Bonus } from '../init/bonus.init'
 import { Game } from '../init/game.init'
-import { Tank } from '../init/player.init'
+import { Player, Tank } from '../init/player.init'
 import {
 	AvailableMoves,
 	BusyCoordinates,
@@ -61,6 +61,7 @@ export const killPlayer = (id: string, game: Game) => {
 	if (p.helmet) return
 	p.lives -= 1
 	p.deathCooldown = 100
+	game.sounds.bang = true
 	game.bangs.push(new Bang('BIG', p.coordinateX, p.coordinateY))
 }
 
@@ -75,12 +76,17 @@ export const hitEnemy = (
 	if (enemy.lives === 0) {
 		if (game.enemies.length > 2 && game.enemySpawnCooldown > 20)
 			game.enemySpawnCooldown = 20
-		if (enemy.bonus) game.bonuses.push(new Bonus(enemy.bonus))
+		if (enemy.bonus) {
+			game.bonuses.push(new Bonus(enemy.bonus))
+			game.sounds.bonus_spawn = true
+		} else {
+			game.sounds.bang = true
+		}
 		game.bangs.push(new Bang('BIG', enemy.coordinateX, enemy.coordinateY))
 		mutationFilter(game.enemies, (e: Tank) => e.id !== id)
 	} else {
 		if (!initiatedByGrenade) {
-			// send heavy hit sound
+			game.sounds.heavy_hit = true
 		}
 	}
 }
@@ -118,6 +124,10 @@ export const isEnemy = (type: TypeTank) => {
 	return type === 'NORMAL' || type === 'SPEEDY' || type === 'HEAVY'
 		? true
 		: false
+}
+
+export const isPlayerAlive = (p: Player) => {
+	return p.lives && !p.deathCooldown ? true : false
 }
 
 export const getTankAvailableMoves = (

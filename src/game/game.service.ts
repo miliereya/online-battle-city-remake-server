@@ -11,13 +11,16 @@ import {
 import { v4 as uuid4 } from 'uuid'
 import { Server } from 'socket.io'
 import { CreateLobbyDto, JoinLobbyDto, publicLobbyData } from './dto'
-import { Map1 } from './maps/1'
 import { bulletsFrameLogic } from './logics/bullet.logic'
 import { playerFrameLogic } from './logics/players.logic'
 import { Game } from './init/game.init'
 import { enemiesFrameLogic, enemiesSpawnLogic } from './logics/enemy.logic'
 import { bonusesFrameLogic } from './logics/bonuses.logic'
-import { globalFrameLogic } from './logics/global.logic'
+import {
+	gameStatusLogic,
+	globalFrameLogic,
+	levelFrameLogic,
+} from './logics/global.logic'
 import { animationsFrameLogic } from './logics/animations.logic'
 
 @Injectable()
@@ -53,23 +56,55 @@ export class GameService {
 	}
 
 	startGame(lobby: Lobby, p2: string, server: Server) {
-		const game = new Game(lobby.id, Map1(), lobby.p1.id, p2)
+		const game = new Game(lobby.id, lobby.p1.id, p2)
 		this.gameManager[game.id] = game
-		setInterval(() => this.frameGame(game, server), 23)
+		delete this.lobbyManager[game.id]
+		// eslint-disable-next-line prefer-const
+		let gameInterval: NodeJS.Timeout
+		const clearGameInterval = () => {
+			clearInterval(gameInterval)
+		}
+		gameInterval = setInterval(
+			() => this.frameGame(game, server, clearGameInterval),
+			23
+		)
 	}
 
-	frameGame(game: Game, server: Server) {
-		playerFrameLogic(game, 1)
-		playerFrameLogic(game, 2)
-		if (!game.isPaused) {
-			globalFrameLogic(game)
-			bonusesFrameLogic(game)
-			bulletsFrameLogic(game)
-			enemiesSpawnLogic(game)
-			enemiesFrameLogic(game)
-			animationsFrameLogic(game)
+	frameGame(game: Game, server: Server, clearGameInterval: () => void) {
+		game.sounds = {
+			heavy_hit: false,
+			pause: false,
+			level_start: false,
+			bang: false,
+			flag_bang: false,
+			game_over: false,
+			shoot: false,
+			hit_1: false,
+			bonus_spawn: false,
+			bonus_pickup: false,
+			player_move: false,
+		}
+		levelFrameLogic(game)
+		gameStatusLogic(game)
+		if (!game.levelChangeAnimation) {
+			if (!game.gameOverAnimation) {
+				playerFrameLogic(game, 1)
+				playerFrameLogic(game, 2)
+			}
+			if (!game.isPaused) {
+				globalFrameLogic(game)
+				bonusesFrameLogic(game)
+				bulletsFrameLogic(game)
+				enemiesSpawnLogic(game)
+				enemiesFrameLogic(game)
+				animationsFrameLogic(game)
+			}
 		}
 		server.to(game.id).emit(GameActions.frame, game)
+		if (game.isEnded) {
+			delete this.gameManager[game.id]
+			clearGameInterval()
+		}
 	}
 
 	input(dto: InputDto) {

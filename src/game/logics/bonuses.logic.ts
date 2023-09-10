@@ -10,7 +10,6 @@ export const bonusesFrameLogic = (game: Game) => {
 	for (let i = 0; i < bonuses.length; i++) {
 		const bonus = bonuses[i]
 		const { lifeTime, type, id } = bonus
-		console.log(lifeTime)
 		if (lifeTime === 0) {
 			deleteBonus(id, bonuses)
 			continue
@@ -27,6 +26,7 @@ export const bonusesFrameLogic = (game: Game) => {
 			p = p2
 		}
 		if (p) {
+			game.sounds.bonus_pickup = true
 			switch (type) {
 				case 'STAR':
 					switch (p.type) {

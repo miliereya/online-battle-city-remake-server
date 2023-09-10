@@ -156,7 +156,14 @@ export const enemiesFrameLogic = (game: Game) => {
 				id,
 			} = enemy
 			const busyCoordinates: BusyCoordinates[] = []
-			addTanksCoordinates([p1, p2, ...enemies], busyCoordinates)
+			addTanksCoordinates([...enemies], busyCoordinates)
+
+			if (p1.lives !== 0 || !p1.deathCooldown) {
+				addTankCoordinates(p1, busyCoordinates)
+			}
+			if (p2.lives !== 0 || !p2.deathCooldown) {
+				addTankCoordinates(p2, busyCoordinates)
+			}
 
 			const enemyCoordinates: BusyCoordinates[] = []
 			addTankCoordinates(enemy, enemyCoordinates)
@@ -191,7 +198,7 @@ export const enemiesFrameLogic = (game: Game) => {
 		} = enemy
 		if (
 			availableBullets !== 0 &&
-			Math.floor(Math.random() * 23 + 1) === 1
+			Math.floor(Math.random() * 18 + 1) === 1
 		) {
 			const bullet = new Bullet(x, y, direction, enemy.type, enemy.id)
 			game.bullets.push(bullet)

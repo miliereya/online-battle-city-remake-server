@@ -18,7 +18,13 @@ import {
 export const bulletsFrameLogic = (game: Game) => {
 	const { bullets, objects, p1, p2, enemies } = game
 	const busyCoordinates: BusyCoordinates[] = []
-	const allTanks = [p1, p2, ...enemies]
+	const allTanks = [...enemies]
+	if (p1.lives !== 0 || !p1.deathCooldown) {
+		allTanks.push(p1)
+	}
+	if (p2.lives !== 0 || !p2.deathCooldown) {
+		allTanks.push(p2)
+	}
 	addBlocksCoordinates(objects, busyCoordinates)
 	addTanksCoordinates(allTanks, busyCoordinates)
 	addBulletsCoordinates(busyCoordinates, bullets)
@@ -57,11 +63,15 @@ export const bulletsFrameLogic = (game: Game) => {
 					if (busyX === bulletX && busyY === bulletY) {
 						if (type === 'BRICK') {
 							deleteBlock(id, game.objects)
+							if (!isEnemy(shooter)) game.sounds.hit_1 = true
 							willHit = true
 						}
 						if (type === 'STONE') {
 							if (level > 1) {
 								deleteBlock(id, game.objects)
+								game.sounds.hit_1 = true
+							} else {
+								game.sounds.heavy_hit = true
 							}
 							willHit = true
 						}
@@ -92,6 +102,7 @@ export const bulletsFrameLogic = (game: Game) => {
 
 						if (type === 'FLAG' && game.isFlagAlive) {
 							game.isFlagAlive = false
+							game.sounds.flag_bang = true
 							willHit = true
 						}
 
@@ -107,6 +118,7 @@ export const bulletsFrameLogic = (game: Game) => {
 					case 'TOP':
 						if (y > 204) {
 							willHit = true
+							if (!isEnemy(shooter)) game.sounds.heavy_hit = true
 						} else {
 							bullet.coordinateY += 1
 						}
@@ -114,6 +126,7 @@ export const bulletsFrameLogic = (game: Game) => {
 					case 'BOTTOM':
 						if (y < 2) {
 							willHit = true
+							if (!isEnemy(shooter)) game.sounds.heavy_hit = true
 						} else {
 							bullet.coordinateY -= 1
 						}
@@ -121,6 +134,7 @@ export const bulletsFrameLogic = (game: Game) => {
 					case 'RIGHT':
 						if (x > 204) {
 							willHit = true
+							if (!isEnemy(shooter)) game.sounds.heavy_hit = true
 						} else {
 							bullet.coordinateX += 1
 						}
@@ -128,6 +142,7 @@ export const bulletsFrameLogic = (game: Game) => {
 					default:
 						if (x < 3) {
 							willHit = true
+							if (!isEnemy(shooter)) game.sounds.heavy_hit = true
 						} else {
 							bullet.coordinateX -= 1
 						}
