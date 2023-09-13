@@ -1,13 +1,5 @@
-import { Bang } from '../init/bang.init'
-import { Bonus } from '../init/bonus.init'
-import { Game } from '../init/game.init'
-import { Player, Tank } from '../init/player.init'
-import {
-	AvailableMoves,
-	BusyCoordinates,
-	TypeMoveButton,
-	TypeTank,
-} from '../types'
+import { Bang, Bonus, Game, Player, Tank } from '../init'
+import { AvailableMoves, BusyCoordinates, TypeDirection } from '../types'
 import { mutationFilter } from './array.utils'
 import { getSideCoordinates } from './coordinates.utils'
 
@@ -93,7 +85,7 @@ export const hitEnemy = (
 
 export const generateNextMoves = () => {
 	const randomVal = Math.floor(Math.random() * 4 + 1)
-	let direction: TypeMoveButton
+	let direction: TypeDirection
 	switch (randomVal) {
 		case 1:
 			direction = 'TOP'
@@ -119,20 +111,13 @@ export const getTankPosition = (tank: Tank) => ({
 	x: tank.coordinateX,
 	direction: tank.direction,
 })
-
-export const isEnemy = (type: TypeTank) => {
-	return type === 'NORMAL' || type === 'SPEEDY' || type === 'HEAVY'
-		? true
-		: false
-}
-
 export const isPlayerAlive = (p: Player) => {
 	return p.lives && !p.deathCooldown ? true : false
 }
 
 export const getTankAvailableMoves = (
 	busyCoordinates: BusyCoordinates[],
-	direction: TypeMoveButton,
+	direction: TypeDirection,
 	x: number,
 	y: number
 ): AvailableMoves => {

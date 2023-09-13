@@ -1,15 +1,12 @@
 import { GameObject } from '../init/game-object.init'
 import { Game } from '../init/game.init'
 
-export enum GameActions {
-	frame = 'game/frame',
-	input = 'game/input',
-}
-
-export type TypeMoveButton = 'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT'
+export type TypeDirection = 'TOP' | 'BOTTOM' | 'LEFT' | 'RIGHT'
 type TypeActionButton = 'FIRE' | 'PAUSE'
 
-export type TypeButton = TypeMoveButton | TypeActionButton
+export type TypeButton = TypeDirection | TypeActionButton
+
+export type TypeEnemySpawnPosition = 'middle' | 'left' | 'right'
 
 export interface AvailableMoves {
 	top: boolean
@@ -23,12 +20,6 @@ export type TypePlayerTank = 'LVL_0' | 'LVL_1' | 'LVL_2' | 'LVL_3'
 
 export type TypeTank = TypeEnemyTank | TypePlayerTank
 
-export interface InputDto {
-	button: TypeButton
-	gameId: string
-	player: string
-}
-
 export type TypeGameBLock =
 	| 'STONE'
 	| 'BRICK'
@@ -36,6 +27,7 @@ export type TypeGameBLock =
 	| 'TREES'
 	| 'ICE'
 	| 'FLAG'
+
 export type TypeBonus = 'GRENADE' | 'HELMET' | 'STAR' | 'HP' | 'TIMER'
 
 export type TypeBang = 'BIG' | 'SMALL'
@@ -81,7 +73,7 @@ export interface BusyCoordinates extends Coordinates {
 export interface Controls {
 	pause: boolean
 	fire: boolean
-	move: TypeMoveButton | null
+	move: TypeDirection | null
 }
 
 export type TypeShooter = 'PLAYER' | 'ENEMY'

@@ -5,14 +5,15 @@ import {
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets'
-import { GameActions, LobbyActions, InputDto } from './types'
+import { GameActions, LobbyActions } from './types'
 import { GameService } from './game.service'
 import { Socket, Server } from 'socket.io'
+import { InputDto } from './dto'
 
 @WebSocketGateway({
 	cors: {
 		credentials: true,
-		origin: 'https://portfolio-client-eosin.vercel.app',
+		origin: 'http://localhost:3000',
 	},
 })
 export class GameGateway {

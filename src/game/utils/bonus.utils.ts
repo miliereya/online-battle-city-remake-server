@@ -1,6 +1,5 @@
 import { Bonus } from '../init/bonus.init'
 import { BusyCoordinates, EnemyList } from '../types'
-import { mutationFilter } from './array.utils'
 import { getSideCoordinates } from './coordinates.utils'
 
 export const generateBonuses = (enemyList: EnemyList[]) => {
@@ -38,10 +37,6 @@ export const generateBonusCoordinates = () => {
 		x: Math.floor(Math.random() * 187 + 10),
 		y: Math.floor(Math.random() * 187 + 10),
 	}
-}
-
-export const deleteBonus = (id: string, bonuses: Bonus[]) => {
-	mutationFilter(bonuses, (obj: Bonus) => obj.id !== id)
 }
 
 export const getBonusCoordinates = (bonus: Bonus) => {

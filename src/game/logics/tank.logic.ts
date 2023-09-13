@@ -1,4 +1,4 @@
-import { Tank } from '../init/player.init'
+import { Tank } from '../init/tank.init'
 import { AvailableMoves, TypeButton } from '../types'
 
 export const moveTank = (

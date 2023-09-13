@@ -1,16 +1,5 @@
-import { Bullet } from '../init/bullet.init'
 import { Game } from '../init/game.init'
-import { Tank } from '../init/player.init'
-import { BusyCoordinates } from '../types'
-import { addBlocksCoordinates } from '../utils/blocks.utils'
-import { isAnyCoordinatesMatches } from '../utils/coordinates.utils'
-import {
-	addTankCoordinates,
-	addTanksCoordinates,
-	generateNextMoves,
-	getTankAvailableMoves,
-} from '../utils/tank.utils'
-import { moveTank } from './tank.logic'
+import { isPlayerAlive } from '../utils/tank.utils'
 
 export const enemiesSpawnLogic = (game: Game) => {
 	const {
@@ -22,122 +11,61 @@ export const enemiesSpawnLogic = (game: Game) => {
 		enemySpawnPosition,
 	} = game
 	if (enemies.length === 4 || enemyList.length === 0) return
+
 	if (enemySpawnCooldown !== 0) {
-		game.enemySpawnCooldown--
-		return
+		return game.enemySpawnCooldown--
 	}
 
-	const x = {
-		left: 0,
-		middle: 97,
-		right: 200,
+	const busyCoordinates = [...enemies]
+	if (isPlayerAlive(p1)) busyCoordinates.push(p1)
+	if (isPlayerAlive(p2)) busyCoordinates.push(p2)
+
+	let isMiddleFree = true
+	let isRightFree = true
+	let isLeftFree = true
+
+	for (let i = 0; i < busyCoordinates.length; i++) {
+		const { coordinateX, coordinateY } = busyCoordinates[i]
+		if (coordinateY >= 185) {
+			if (coordinateX <= 22) {
+				isLeftFree = false
+			} else if (coordinateX >= 82 && coordinateX <= 112) {
+				isMiddleFree = false
+			} else if (coordinateX >= 185) {
+				isRightFree = false
+			}
+		}
 	}
 
-	const y = 200
-
-	const busyCoordinates: BusyCoordinates[] = []
-	addTanksCoordinates(enemies, busyCoordinates)
-	addTankCoordinates(p1, busyCoordinates)
-	addTankCoordinates(p2, busyCoordinates)
-
-	const middleCoordinates: BusyCoordinates[] = []
-	addTankCoordinates(
-		{
-			coordinateX: x.middle,
-			coordinateY: y,
-			id: 'middle',
-			type: 'NORMAL',
-		} as Tank,
-		middleCoordinates
-	)
-
-	const isMiddleCoordinatesMatches = isAnyCoordinatesMatches(
-		middleCoordinates,
-		busyCoordinates
-	)
-
-	if (enemySpawnPosition === 1 && !isMiddleCoordinatesMatches) {
-		const newTank = game.enemyList.shift()
-		enemies.push(new Tank('middle', newTank.type, undefined, newTank.bonus))
-		game.enemySpawnCooldown = 100
-		game.enemySpawnPosition = 2
-		return
-	}
-
-	const rightCoordinates: BusyCoordinates[] = []
-	addTankCoordinates(
-		{
-			coordinateX: x.right,
-			coordinateY: y,
-			id: 'right',
-			type: 'NORMAL',
-		} as Tank,
-		rightCoordinates
-	)
-
-	const isRightCoordinatesMatches = isAnyCoordinatesMatches(
-		rightCoordinates,
-		busyCoordinates
-	)
-
-	if (enemySpawnPosition === 2 && !isRightCoordinatesMatches) {
-		const newTank = game.enemyList.shift()
-		enemies.push(new Tank('right', newTank.type, undefined, newTank.bonus))
-		game.enemySpawnCooldown = 100
-		game.enemySpawnPosition = 3
-		return
-	}
-	const leftCoordinates: BusyCoordinates[] = []
-	addTankCoordinates(
-		{
-			coordinateX: x.left,
-			coordinateY: y,
-			id: 'left',
-			type: 'NORMAL',
-		} as Tank,
-		leftCoordinates
-	)
-
-	const isLeftCoordinatesMatches = isAnyCoordinatesMatches(
-		leftCoordinates,
-		busyCoordinates
-	)
-
-	if (enemySpawnPosition === 3 && !isLeftCoordinatesMatches) {
-		const newTank = game.enemyList.shift()
-		enemies.push(new Tank('left', newTank.type, undefined, newTank.bonus))
-		game.enemySpawnCooldown = 100
-		game.enemySpawnPosition = 1
-		return
-	}
-
-	if (!isMiddleCoordinatesMatches) {
-		const newTank = game.enemyList.shift()
-		enemies.push(new Tank('middle', newTank.type, undefined, newTank.bonus))
-		game.enemySpawnCooldown = 100
-		game.enemySpawnPosition = 2
-		return
-	}
-
-	if (!isRightCoordinatesMatches) {
-		const newTank = game.enemyList.shift()
-		enemies.push(new Tank('right', newTank.type, undefined, newTank.bonus))
-		game.enemySpawnCooldown = 100
-		game.enemySpawnPosition = 3
-		return
-	}
-
-	if (!isLeftCoordinatesMatches) {
-		const newTank = game.enemyList.shift()
-		enemies.push(new Tank('left', newTank.type, undefined, newTank.bonus))
-		game.enemySpawnCooldown = 100
-		game.enemySpawnPosition = 1
-		return
+	if (enemySpawnPosition === 'middle') {
+		if (isMiddleFree) {
+			return game.spawnEnemy('middle')
+		} else if (isRightFree) {
+			return game.spawnEnemy('right')
+		} else if (isLeftFree) {
+			return game.spawnEnemy('left')
+		}
+	} else if (enemySpawnPosition === 'right') {
+		if (isRightFree) {
+			return game.spawnEnemy('right')
+		} else if (isLeftFree) {
+			return game.spawnEnemy('left')
+		} else if (isMiddleFree) {
+			return game.spawnEnemy('middle')
+		}
+	} else {
+		if (isLeftFree) {
+			return game.spawnEnemy('left')
+		} else if (isMiddleFree) {
+			return game.spawnEnemy('middle')
+		} else if (isRightFree) {
+			return game.spawnEnemy('right')
+		}
 	}
 }
 
 export const enemiesFrameLogic = (game: Game) => {
-	const { enemies, p1, p2, objects, timerBonus } = game
+	const { enemies, p1, p2, objects, timerBonus, sounds, bullets } = game
 
 	if (timerBonus) return
 
@@ -148,61 +76,34 @@ export const enemiesFrameLogic = (game: Game) => {
 			continue
 		}
 		for (let l = enemy.type === 'SPEEDY' ? 2 : 1; l > 0; l--) {
-			const {
-				nextMoves,
-				coordinateX: x,
-				coordinateY: y,
-				direction,
-				id,
-			} = enemy
-			const busyCoordinates: BusyCoordinates[] = []
-			addTanksCoordinates([...enemies], busyCoordinates)
+			const { nextMoves, direction, id } = enemy
 
-			if (p1.lives !== 0 || !p1.deathCooldown) {
-				addTankCoordinates(p1, busyCoordinates)
+			if (nextMoves.direction !== direction) {
+				enemy.direction = nextMoves.direction
+			} else {
+				const busyCoordinates = [
+					...enemies.filter((e) => e.id !== id),
+					...objects,
+				]
+				if (isPlayerAlive(p1)) busyCoordinates.push(p1)
+				if (isPlayerAlive(p2)) busyCoordinates.push(p2)
+
+				enemy.move(busyCoordinates)
 			}
-			if (p2.lives !== 0 || !p2.deathCooldown) {
-				addTankCoordinates(p2, busyCoordinates)
-			}
-
-			const enemyCoordinates: BusyCoordinates[] = []
-			addTankCoordinates(enemy, enemyCoordinates)
-
-			addBlocksCoordinates(objects, busyCoordinates)
-			addTanksCoordinates(
-				[...enemies.filter((e) => e.id !== id), p1, p2],
-				busyCoordinates
-			)
-
-			const availableMoves = getTankAvailableMoves(
-				busyCoordinates,
-				direction,
-				x,
-				y
-			)
-
-			moveTank(availableMoves, nextMoves.direction, enemy)
+			sounds.enemy_move = true
 			nextMoves.repeat--
 			if (nextMoves.repeat === 1) {
-				enemy.nextMoves = generateNextMoves()
+				enemy.generateNextMoves()
 			}
 		}
 		if (enemy.type === 'SPEEDY') {
 			enemy.tick = enemy.tick === 1 ? 2 : 1
 		}
-		const {
-			coordinateX: x,
-			coordinateY: y,
-			direction,
-			availableBullets,
-		} = enemy
 		if (
-			availableBullets !== 0 &&
+			enemy.availableBullets !== 0 &&
 			Math.floor(Math.random() * 18 + 1) === 1
 		) {
-			const bullet = new Bullet(x, y, direction, enemy.type, enemy.id)
-			game.bullets.push(bullet)
-			enemy.availableBullets--
+			enemy.shoot(bullets)
 		}
 	}
 }

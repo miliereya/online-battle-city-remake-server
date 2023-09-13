@@ -10,13 +10,6 @@ export interface DeleteLobbyDto {
 	id: string
 }
 
-export enum LobbyActions {
-	create = 'lobby/create',
-	find = 'lobby/find',
-	join = 'lobby/join',
-	delete = 'lobby/delete',
-}
-
 export interface LobbyManager {
 	[key: string]: Lobby
 }

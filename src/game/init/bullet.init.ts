@@ -1,9 +1,9 @@
 import { v4 as uuid4 } from 'uuid'
-import { TypeMoveButton, TypeTank } from '../types'
+import { TypeDirection, TypeTank } from '../types'
 import { Coordinates } from './coordinates.init'
 
 export class Bullet extends Coordinates {
-	direction: TypeMoveButton
+	direction: TypeDirection
 	id: string
 	shooter: TypeTank
 	level: 1 | 2
@@ -12,7 +12,7 @@ export class Bullet extends Coordinates {
 	constructor(
 		x: number,
 		y: number,
-		direction: TypeMoveButton,
+		direction: TypeDirection,
 		shooter: TypeTank,
 		shooterId: string
 	) {

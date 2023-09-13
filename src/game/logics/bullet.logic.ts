@@ -2,27 +2,23 @@ import { Bang } from '../init/bang.init'
 import { Bullet } from '../init/bullet.init'
 import { Game } from '../init/game.init'
 import { BusyCoordinates } from '../types'
+import { isEnemy } from '../utils'
 import { mutationFilter } from '../utils/array.utils'
 import { addBlocksCoordinates, deleteBlock } from '../utils/blocks.utils'
 import {
 	addBulletsCoordinates,
 	getBulletCoordinates,
 } from '../utils/bullet.utils'
-import {
-	addTanksCoordinates,
-	hitEnemy,
-	isEnemy,
-	killPlayer,
-} from '../utils/tank.utils'
+import { addTanksCoordinates, hitEnemy, killPlayer } from '../utils/tank.utils'
 
 export const bulletsFrameLogic = (game: Game) => {
 	const { bullets, objects, p1, p2, enemies } = game
 	const busyCoordinates: BusyCoordinates[] = []
 	const allTanks = [...enemies]
-	if (p1.lives !== 0 || !p1.deathCooldown) {
+	if (p1.lives !== 0 && !p1.deathCooldown) {
 		allTanks.push(p1)
 	}
-	if (p2.lives !== 0 || !p2.deathCooldown) {
+	if (p2.lives !== 0 && !p2.deathCooldown) {
 		allTanks.push(p2)
 	}
 	addBlocksCoordinates(objects, busyCoordinates)
@@ -108,6 +104,19 @@ export const bulletsFrameLogic = (game: Game) => {
 
 						if (type === 'BULLET' && id !== bullet.id) {
 							willHit = true
+							const bu = game.bullets.find((b) => b.id === id)
+							const tank = allTanks.find(
+								(t) => t.id === bu.shooterId
+							)
+							if (tank) {
+								if (tank.type !== 'LVL_0') {
+									tank.availableBullets++
+								} else {
+									if (tank.availableBullets === 0) {
+										tank.availableBullets++
+									}
+								}
+							}
 							mutationFilter(bullets, (b: Bullet) => b.id !== id)
 						}
 					}

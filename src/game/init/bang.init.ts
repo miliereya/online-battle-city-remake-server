@@ -1,4 +1,5 @@
 import { TypeBang } from '../types'
+import { mutationFilter } from '../utils'
 import { Coordinates } from './coordinates.init'
 import { v4 as uuid4 } from 'uuid'
 
@@ -10,5 +11,9 @@ export class Bang extends Coordinates {
 		super(x, y)
 		this.id = uuid4()
 		this.type = type
+	}
+
+	clear(bangs: Bang[]) {
+		mutationFilter(bangs, (b: Bang) => b.id === this.id)
 	}
 }

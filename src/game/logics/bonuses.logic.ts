@@ -1,12 +1,12 @@
 import { Game } from '../init/game.init'
-import { Player } from '../init/player.init'
-import { BusyCoordinates } from '../types'
-import { deleteBonus, getBonusCoordinates } from '../utils/bonus.utils'
-import { isAnyCoordinatesMatches } from '../utils/coordinates.utils'
-import { addTankCoordinates, hitEnemy } from '../utils/tank.utils'
+import { deleteBonus } from '../utils'
+import { hitEnemy } from '../utils/tank.utils'
 
 export const bonusesFrameLogic = (game: Game) => {
-	const { bonuses, p1, p2, enemies } = game
+	const { bonuses, p1, p2, enemies, timerBonus, sounds } = game
+
+	if (timerBonus) game.timerBonus--
+
 	for (let i = 0; i < bonuses.length; i++) {
 		const bonus = bonuses[i]
 		const { lifeTime, type, id } = bonus
@@ -14,19 +14,9 @@ export const bonusesFrameLogic = (game: Game) => {
 			deleteBonus(id, bonuses)
 			continue
 		}
-		let p: null | Player = null
-		const bonusCoordinates = getBonusCoordinates(bonus)
-		const p1Coordinates: BusyCoordinates[] = []
-		const p2Coordinates: BusyCoordinates[] = []
-		addTankCoordinates(p1, p1Coordinates)
-		addTankCoordinates(p2, p2Coordinates)
-		if (isAnyCoordinatesMatches(p1Coordinates, bonusCoordinates)) {
-			p = p1
-		} else if (isAnyCoordinatesMatches(p2Coordinates, bonusCoordinates)) {
-			p = p2
-		}
+		const p = bonus.isAnyPlayerTouched(p1, p2)
 		if (p) {
-			game.sounds.bonus_pickup = true
+			sounds.bonus_pickup = true
 			switch (type) {
 				case 'STAR':
 					switch (p.type) {

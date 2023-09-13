@@ -1,90 +1,61 @@
-import { Bullet } from '../init/bullet.init'
 import { Game } from '../init/game.init'
-import { BusyCoordinates } from '../types'
-import { addBlocksCoordinates } from '../utils/blocks.utils'
-import {
-	addTankCoordinates,
-	addTanksCoordinates,
-	getTankAvailableMoves,
-} from '../utils/tank.utils'
-import { moveTank } from './tank.logic'
+import { isPlayerCanMove, isPlayerCanShoot } from '../utils'
+import { isPlayerAlive } from '../utils/tank.utils'
 
-export const playerFrameLogic = (game: Game, num: 1 | 2) => {
+const playerFrameLogic = (game: Game, num: 1 | 2) => {
 	const p = num === 1 ? game.p1 : game.p2
 	const controller = num === 1 ? game.p1Controls : game.p2Controls
 	const pAnother = num === 2 ? game.p1 : game.p2
 
-	const { enemies, objects } = game
+	const { enemies, objects, isPaused, sounds, bullets } = game
+	const { fire, move, pause } = controller
+	const { spawnAnimation, helmet, deathCooldown, direction } = p
 
-	if (p.spawnAnimation) {
-		p.spawnAnimation--
-	}
+	if (spawnAnimation) p.spawnAnimation--
 
-	if (controller.pause) {
-		if (!game.isPaused) game.sounds.pause = true
-		game.isPaused = !game.isPaused
+	if (pause) {
+		if (isPaused) sounds.pause = true
+
+		game.isPaused = !isPaused
 		controller.pause = false
 	}
 
-	if (game.isPaused) return
+	if (isPaused) return
 
-	if (p.helmet !== 0) p.helmet--
+	if (helmet !== 0) p.helmet--
 
-	if (p.deathCooldown === 1) {
-		p.type = 'LVL_0'
-		p.direction = 'TOP'
-		p.availableBullets = 1
-		p.spawnAnimation = 50
-		p.helmet = 120
-		p.coordinateX = num === 1 ? 71 : 136
-		p.coordinateY = 7
-	}
-	if (p.deathCooldown > 0) {
-		p.deathCooldown -= 1
-	}
+	if (deathCooldown === 1) p.respawn()
 
-	if (controller.fire) {
+	if (deathCooldown > 0) p.deathCooldown -= 1
+
+	if (fire) {
 		controller.fire = false
-		if (p.deathCooldown || p.availableBullets === 0 || p.spawnAnimation)
-			return
 
-		const y = p.coordinateY
-		const x = p.coordinateX
-		const direction = p.direction
+		if (!isPlayerCanShoot(p)) return
 
-		const bullet = new Bullet(x, y, direction, p.type, p.id)
-		game.sounds.shoot = true
-		game.bullets.push(bullet)
-		p.availableBullets--
+		sounds.shoot = true
+		p.shoot(bullets)
 	}
 
-	if (controller.move) {
-		if (p.deathCooldown !== 0 || p.spawnAnimation) {
+	if (move) {
+		if (!isPlayerCanMove(p)) {
 			controller.move = null
 			return
 		}
 
-		const y = p.coordinateY
-		const x = p.coordinateX
-		const direction = p.direction
-
-		const busyCoordinates: BusyCoordinates[] = []
-
-		addBlocksCoordinates(objects, busyCoordinates)
-		addTanksCoordinates([...enemies], busyCoordinates)
-		if (pAnother.lives && !pAnother.deathCooldown) {
-			addTankCoordinates(pAnother, busyCoordinates)
+		if (move !== direction) {
+			p.direction = move
+		} else {
+			const busyCoordinates = [...enemies, ...objects]
+			if (isPlayerAlive(pAnother)) busyCoordinates.push(pAnother)
+			p.move(busyCoordinates)
 		}
-
-		const availableMoves = getTankAvailableMoves(
-			busyCoordinates,
-			direction,
-			x,
-			y
-		)
-
-		moveTank(availableMoves, controller.move, p)
-		game.sounds.player_move = true
+		sounds.player_move = true
 		controller.move = null
 	}
+}
+
+export const playersFrameLogic = (game: Game) => {
+	playerFrameLogic(game, 1)
+	playerFrameLogic(game, 2)
 }
