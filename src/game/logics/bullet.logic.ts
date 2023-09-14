@@ -64,7 +64,7 @@ export const bulletsFrameLogic = (game: Game) => {
 						deleteBlock(id, game.objects)
 						sounds.hit_1 = true
 					} else {
-						sounds.heavy_hit = true
+						if (!isEnemy(shooter)) sounds.heavy_hit = true
 					}
 					willHit = true
 				}
@@ -86,16 +86,13 @@ export const bulletsFrameLogic = (game: Game) => {
 					if (id !== shooterId) willHit = true
 				}
 				if (isEnemy(type) && isBulletHitTank(busyX, busyY, x, y)) {
-					if (
-						id !== shooterId &&
-						!isEnemy(shooter) &&
-						hitEnemy(id, game)
-					) {
-						willHit = true
-					}
+					if (!isEnemy(shooter)) willHit = hitEnemy(id, game)
+
+					if (id !== shooterId) willHit = true
 				}
 				if (
 					type === 'BULLET' &&
+					id !== bullet.id &&
 					isBulletHitBullet(busyX, busyY, x, y)
 				) {
 					willHit = true

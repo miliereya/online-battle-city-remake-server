@@ -78,15 +78,14 @@ export const isBulletHitBullet = (
 	x: number,
 	y: number
 ) =>
-	((busyY - 1 === y + 2 ||
-		busyY - 1 === y - 2 ||
-		busyY + 1 === y + 2 ||
-		busyY + 1 === y - 2) &&
+	((busyY - 1 === y + 1 ||
+		busyY - 1 === y - 1 ||
+		busyY + 1 === y + 1 ||
+		busyY + 1 === y - 1) &&
 		busyX >= x - 2 &&
 		busyX <= x + 2) ||
-	((busyX - 1 === x + 2 ||
-		busyX - 1 === x - 2 ||
-		busyX + 1 === x + 2 ||
-		busyX + 1 === x - 2) &&
-		busyY >= y - 2 &&
-		busyY <= y + 2)
+	((busyX - 1 === x + 1 ||
+		busyX - 1 === x - 1 ||
+		busyX + 1 === x + 1 ||
+		busyX + 1 === x - 1) &&
+		busyY === y)

@@ -35,6 +35,7 @@ export class Bullet extends Coordinates {
 		this.direction = direction
 		this.shooter = shooter
 		this.shooterId = shooterId
+		this.type = 'BULLET'
 		if (
 			shooter === 'NORMAL' ||
 			shooter === 'SPEEDY' ||
