@@ -4,7 +4,7 @@ export class Player extends Tank {
 	helmet = 120
 	num: 1 | 2
 	constructor(side: 'left' | 'right', id: string) {
-		super(side, 'LVL_3', id)
+		super(side, 'LVL_0', id)
 		this.num = side === 'left' ? 1 : 2
 	}
 
