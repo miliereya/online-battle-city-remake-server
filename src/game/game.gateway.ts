@@ -13,7 +13,7 @@ import { InputDto } from './dto'
 @WebSocketGateway({
 	cors: {
 		credentials: true,
-		origin: 'http://localhost:3000',
+		origin: 'https://portfolio-client-eosin.vercel.app',
 	},
 })
 export class GameGateway {
