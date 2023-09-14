@@ -9,6 +9,7 @@ export class Bullet extends Coordinates {
 	level: 1 | 2
 	shooterId: string
 	speed: 1 | 2 | 3
+	type: 'BULLET'
 	constructor(
 		x: number,
 		y: number,

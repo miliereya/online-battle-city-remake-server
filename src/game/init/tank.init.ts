@@ -186,6 +186,5 @@ export class Tank extends Coordinates {
 				break
 		}
 		if (willMove) this.tick = this.tick === 1 ? 2 : 1
-		return 'qwe'
 	}
 }

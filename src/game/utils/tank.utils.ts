@@ -63,7 +63,7 @@ export const hitEnemy = (
 	initiatedByGrenade = false
 ) => {
 	const enemy = game.enemies.find((e: Tank) => e.id === id)
-	if (!enemy) return
+	if (!enemy || enemy.spawnAnimation) return false
 	enemy.lives--
 	if (enemy.lives === 0) {
 		if (game.enemies.length > 2 && game.enemySpawnCooldown > 20)
@@ -81,6 +81,7 @@ export const hitEnemy = (
 			game.sounds.heavy_hit = true
 		}
 	}
+	return true
 }
 
 export const generateNextMoves = () => {

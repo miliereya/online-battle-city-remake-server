@@ -2,28 +2,33 @@ import { Bang } from '../init/bang.init'
 import { Bullet } from '../init/bullet.init'
 import { Game } from '../init/game.init'
 import { BusyCoordinates } from '../types'
-import { isEnemy } from '../utils'
-import { mutationFilter } from '../utils/array.utils'
-import { addBlocksCoordinates, deleteBlock } from '../utils/blocks.utils'
 import {
-	addBulletsCoordinates,
-	getBulletCoordinates,
-} from '../utils/bullet.utils'
-import { addTanksCoordinates, hitEnemy, killPlayer } from '../utils/tank.utils'
+	isBulletHitBullet,
+	isBulletHitObject,
+	isBulletHitTank,
+	isEnemy,
+	isPlayer,
+} from '../utils'
+import { mutationFilter } from '../utils/array.utils'
+import { deleteBlock } from '../utils/blocks.utils'
+import { hitEnemy, isPlayerAlive, killPlayer } from '../utils/tank.utils'
 
 export const bulletsFrameLogic = (game: Game) => {
-	const { bullets, objects, p1, p2, enemies } = game
-	const busyCoordinates: BusyCoordinates[] = []
+	const { bullets, objects, p1, p2, enemies, sounds, bangs } = game
+	const busyCoordinates: BusyCoordinates[] = [
+		...enemies,
+		...bullets,
+		...objects,
+	]
 	const allTanks = [...enemies]
-	if (p1.lives !== 0 && !p1.deathCooldown) {
+	if (isPlayerAlive(p1)) {
+		busyCoordinates.push(p1)
 		allTanks.push(p1)
 	}
-	if (p2.lives !== 0 && !p2.deathCooldown) {
+	if (isPlayerAlive(p2)) {
+		busyCoordinates.push(p2)
 		allTanks.push(p2)
 	}
-	addBlocksCoordinates(objects, busyCoordinates)
-	addTanksCoordinates(allTanks, busyCoordinates)
-	addBulletsCoordinates(busyCoordinates, bullets)
 
 	for (let i = 0; i < bullets.length; i++) {
 		let willHit = false
@@ -39,95 +44,84 @@ export const bulletsFrameLogic = (game: Game) => {
 				shooterId,
 				level,
 			} = bullet
-			const bulletCoordinates = getBulletCoordinates(bullet)
 
-			for (let i = 0; i < bulletCoordinates.length; i++) {
-				if (!bullet || willHit) break
+			for (let m = 0; m < busyCoordinates.length; m++) {
+				const {
+					coordinateX: busyX,
+					coordinateY: busyY,
+					id,
+					type,
+				} = busyCoordinates[m]
 
-				const { coordinateX: bulletX, coordinateY: bulletY } =
-					bulletCoordinates[i]
-				for (let l = 0; l < busyCoordinates.length; l++) {
-					if (!bullet || willHit) break
+				if (type === 'BRICK' && isBulletHitObject(busyX, busyY, x, y)) {
+					deleteBlock(id, objects)
+					if (!isEnemy(shooter)) sounds.hit_1 = true
+					willHit = true
+				}
 
-					const {
-						coordinateX: busyX,
-						coordinateY: busyY,
-						id,
-						type,
-					} = busyCoordinates[l]
+				if (type === 'STONE' && isBulletHitObject(busyX, busyY, x, y)) {
+					if (level > 1) {
+						deleteBlock(id, game.objects)
+						sounds.hit_1 = true
+					} else {
+						sounds.heavy_hit = true
+					}
+					willHit = true
+				}
 
-					if (busyX === bulletX && busyY === bulletY) {
-						if (type === 'BRICK') {
-							deleteBlock(id, game.objects)
-							if (!isEnemy(shooter)) game.sounds.hit_1 = true
-							willHit = true
-						}
-						if (type === 'STONE') {
-							if (level > 1) {
-								deleteBlock(id, game.objects)
-								game.sounds.hit_1 = true
-							} else {
-								game.sounds.heavy_hit = true
-							}
-							willHit = true
-						}
-						if (
-							type === 'LVL_0' ||
-							type === 'LVL_1' ||
-							type === 'LVL_2' ||
-							type === 'LVL_3'
-						) {
-							if (isEnemy(shooter)) {
-								killPlayer(id, game)
-							}
-							if (id !== shooterId) willHit = true
-						}
-						if (
-							type === 'NORMAL' ||
-							type === 'SPEEDY' ||
-							type === 'HEAVY'
-						) {
-							if (id !== shooterId) {
-								willHit = true
-							}
-							if (!isEnemy(shooter)) {
-								hitEnemy(id, game)
-								willHit = true
-							}
-						}
+				if (
+					type === 'FLAG' &&
+					game.isFlagAlive &&
+					isBulletHitObject(busyX, busyY, x, y)
+				) {
+					game.isFlagAlive = false
+					sounds.flag_bang = true
+					willHit = true
+				}
 
-						if (type === 'FLAG' && game.isFlagAlive) {
-							game.isFlagAlive = false
-							game.sounds.flag_bang = true
-							willHit = true
-						}
-
-						if (type === 'BULLET' && id !== bullet.id) {
-							willHit = true
-							const bu = game.bullets.find((b) => b.id === id)
-							const tank = allTanks.find(
-								(t) => t.id === bu.shooterId
-							)
-							if (tank) {
-								if (tank.type !== 'LVL_0') {
-									tank.availableBullets++
-								} else {
-									if (tank.availableBullets === 0) {
-										tank.availableBullets++
-									}
-								}
-							}
-							mutationFilter(bullets, (b: Bullet) => b.id !== id)
-						}
+				if (isPlayer(type) && isBulletHitTank(busyX, busyY, x, y)) {
+					if (isEnemy(shooter)) {
+						killPlayer(id, game)
+					}
+					if (id !== shooterId) willHit = true
+				}
+				if (isEnemy(type) && isBulletHitTank(busyX, busyY, x, y)) {
+					if (
+						id !== shooterId &&
+						!isEnemy(shooter) &&
+						hitEnemy(id, game)
+					) {
+						willHit = true
 					}
 				}
+				if (
+					type === 'BULLET' &&
+					isBulletHitBullet(busyX, busyY, x, y)
+				) {
+					willHit = true
+					const secondBullet = bullets.find((b) => b.id === id)
+					const tank = allTanks.find(
+						(t) => t.id === secondBullet.shooterId
+					)
+					if (tank) {
+						if (tank.type !== 'LVL_0') {
+							tank.availableBullets++
+						} else {
+							if (tank.availableBullets === 0) {
+								tank.availableBullets++
+							}
+						}
+					}
+					mutationFilter(bullets, (b: Bullet) => b.id !== id)
+				}
 			}
+
 			if (!willHit) {
 				switch (direction) {
 					case 'TOP':
 						if (y > 204) {
 							willHit = true
-							if (!isEnemy(shooter)) game.sounds.heavy_hit = true
+							if (!isEnemy(shooter)) sounds.heavy_hit = true
 						} else {
 							bullet.coordinateY += 1
 						}
@@ -135,7 +129,7 @@ export const bulletsFrameLogic = (game: Game) => {
 					case 'BOTTOM':
 						if (y < 2) {
 							willHit = true
-							if (!isEnemy(shooter)) game.sounds.heavy_hit = true
+							if (!isEnemy(shooter)) sounds.heavy_hit = true
 						} else {
 							bullet.coordinateY -= 1
 						}
@@ -143,7 +137,7 @@ export const bulletsFrameLogic = (game: Game) => {
 					case 'RIGHT':
 						if (x > 204) {
 							willHit = true
-							if (!isEnemy(shooter)) game.sounds.heavy_hit = true
+							if (!isEnemy(shooter)) sounds.heavy_hit = true
 						} else {
 							bullet.coordinateX += 1
 						}
@@ -151,7 +145,7 @@ export const bulletsFrameLogic = (game: Game) => {
 					default:
 						if (x < 3) {
 							willHit = true
-							if (!isEnemy(shooter)) game.sounds.heavy_hit = true
+							if (!isEnemy(shooter)) sounds.heavy_hit = true
 						} else {
 							bullet.coordinateX -= 1
 						}
@@ -160,7 +154,7 @@ export const bulletsFrameLogic = (game: Game) => {
 			}
 			if (willHit) {
 				mutationFilter(bullets, (b: Bullet) => b.id !== bullet.id)
-				game.bangs.push(new Bang('SMALL', x, y))
+				bangs.push(new Bang('SMALL', x, y))
 				const tank = allTanks.find((t) => t.id === shooterId)
 				if (tank)
 					if (tank.type !== 'LVL_0') {

@@ -33,3 +33,60 @@ export const isPlayerCanShoot = (p: Player) =>
 
 export const isPlayerCanMove = (p: Player) =>
 	p.deathCooldown || p.spawnAnimation ? false : true
+
+export const isBulletHitObject = (
+	busyX: number,
+	busyY: number,
+	x: number,
+	y: number
+) =>
+	((busyY === y + 2 ||
+		busyY === y - 2 ||
+		busyY + 7 === y + 2 ||
+		busyY + 7 === y - 2) &&
+		busyX >= x - 8 &&
+		busyX <= x + 1) ||
+	((busyX === x + 2 ||
+		busyX === x - 2 ||
+		busyX + 7 === x + 2 ||
+		busyX + 7 === x - 2) &&
+		busyY >= y - 8 &&
+		busyY <= y + 1)
+
+export const isBulletHitTank = (
+	busyX: number,
+	busyY: number,
+	x: number,
+	y: number
+) =>
+	((busyY - 7 === y + 2 ||
+		busyY - 7 === y - 2 ||
+		busyY + 7 === y + 2 ||
+		busyY + 7 === y - 2) &&
+		busyX >= x - 8 &&
+		busyX <= x + 8) ||
+	((busyX - 7 === x + 2 ||
+		busyX - 7 === x - 2 ||
+		busyX + 7 === x + 2 ||
+		busyX + 7 === x - 2) &&
+		busyY >= y - 8 &&
+		busyY <= y + 8)
+
+export const isBulletHitBullet = (
+	busyX: number,
+	busyY: number,
+	x: number,
+	y: number
+) =>
+	((busyY - 1 === y + 2 ||
+		busyY - 1 === y - 2 ||
+		busyY + 1 === y + 2 ||
+		busyY + 1 === y - 2) &&
+		busyX >= x - 2 &&
+		busyX <= x + 2) ||
+	((busyX - 1 === x + 2 ||
+		busyX - 1 === x - 2 ||
+		busyX + 1 === x + 2 ||
+		busyX + 1 === x - 2) &&
+		busyY >= y - 2 &&
+		busyY <= y + 2)
