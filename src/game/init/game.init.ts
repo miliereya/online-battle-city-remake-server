@@ -76,6 +76,15 @@ export class Game {
 		}
 	}
 
+	pause(controller: Controls) {
+		if (controller.pause) {
+			if (!this.isPaused) this.sounds.pause = true
+
+			this.isPaused = !this.isPaused
+			controller.pause = false
+		}
+	}
+
 	nextLevel() {
 		let map: Map
 		if (this.editor) {

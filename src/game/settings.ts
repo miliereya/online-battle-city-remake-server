@@ -1,3 +1,3 @@
 export const Settings = {
-	frameRate: 23,
+	frameRate: 18,
 }

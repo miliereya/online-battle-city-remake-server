@@ -13,12 +13,7 @@ const playerFrameLogic = (game: Game, num: 1 | 2) => {
 
 	if (spawnAnimation) p.spawnAnimation--
 
-	if (pause) {
-		if (isPaused) sounds.pause = true
-
-		game.isPaused = !isPaused
-		controller.pause = false
-	}
+	if (pause) game.pause(controller)
 
 	if (isPaused) return
 
