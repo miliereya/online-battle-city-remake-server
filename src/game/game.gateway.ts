@@ -8,7 +8,7 @@ import {
 import { GameActions, LobbyActions } from './types'
 import { GameService } from './game.service'
 import { Socket, Server } from 'socket.io'
-import { InputDto } from './dto'
+import { CreateLobbyDto, InputDto } from './dto'
 
 @WebSocketGateway({
 	cors: {
@@ -23,8 +23,15 @@ export class GameGateway {
 	server: Server
 
 	@SubscribeMessage(LobbyActions.create)
-	createLobby(@ConnectedSocket() p1: Socket, @MessageBody() name: string) {
-		return this.gameService.createLobby({ p1, name })
+	createLobby(
+		@ConnectedSocket() p1: Socket,
+		@MessageBody() dto: CreateLobbyDto
+	) {
+		return this.gameService.createLobby({
+			p1,
+			name: dto.name,
+			editor: dto.editor,
+		})
 	}
 
 	@SubscribeMessage(LobbyActions.find)

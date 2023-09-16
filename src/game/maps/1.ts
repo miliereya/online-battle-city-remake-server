@@ -1,4 +1,3 @@
-import { EnemyList1 } from '../enemies-list/easy.enemy-list'
 import { GameObject } from '../init/game-object.init'
 import { Map } from '../types'
 import { MapInstance } from './map-instance'
@@ -227,5 +226,26 @@ export const Map1 = (): Map => ({
 		new GameObject('STONE', 12, 19),
 		new GameObject('STONE', 13, 19),
 	],
-	enemyList: [...EnemyList1],
+	enemyList: [
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'NORMAL' },
+		{ type: 'SPEEDY' },
+		{ type: 'SPEEDY' },
+	],
 })

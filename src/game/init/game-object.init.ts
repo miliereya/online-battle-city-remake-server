@@ -5,7 +5,7 @@ import { Coordinates } from './coordinates.init'
 export class GameObject extends Coordinates {
 	id: string
 	type: TypeGameBLock
-	constructor(type: TypeGameBLock, x: Cell, y: Cell) {
+	constructor(type: TypeGameBLock, x: Cell | number, y: Cell | number) {
 		super(x * 8, y * 8)
 		this.id = uuid4()
 		this.type = type

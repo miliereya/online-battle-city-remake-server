@@ -1,13 +1,19 @@
 import { GameObject } from './game-object.init'
 import { Player } from './player.init'
 import { Bullet } from './bullet.init'
-import { Controls, EnemyList, TypeEnemySpawnPosition } from '../types'
+import {
+	Controls,
+	EditorObject,
+	EnemyList,
+	TypeEnemySpawnPosition,
+} from '../types'
 import { Bonus } from './bonus.init'
 import { Bang } from './bang.init'
 import { Tank } from './tank.init'
 import { generateBonuses } from '../utils'
 import { maps as mapsBlank } from '../maps'
 import { Map } from '../types'
+import { EditorMap } from '../maps/editor'
 
 export class Game {
 	id: string
@@ -42,13 +48,15 @@ export class Game {
 		player_move: false,
 		enemy_move: false,
 	}
+	editor?: EditorObject[]
 	isEnded = false
 	p1Controls: Controls = { fire: false, move: null, pause: false }
 	p2Controls: Controls = { fire: false, move: null, pause: false }
-	constructor(id: string, p1: string, p2: string) {
+	constructor(id: string, p1: string, p2: string, editor?: EditorObject[]) {
 		this.id = id
 		this.p1 = new Player('left', p1)
 		this.p2 = new Player('right', p2)
+		this.editor = editor
 	}
 
 	resetSounds() {
@@ -69,8 +77,14 @@ export class Game {
 	}
 
 	nextLevel() {
-		const maps = JSON.parse(JSON.stringify(mapsBlank))
-		const map: Map = maps['map' + this.level]
+		let map: Map
+		if (this.editor) {
+			map = EditorMap(this.editor)
+			this.editor = undefined
+		} else {
+			const maps = JSON.parse(JSON.stringify(mapsBlank))
+			map = maps['map' + this.level]
+		}
 		this.objects = map.objects
 		this.bonuses = []
 		this.bullets = []

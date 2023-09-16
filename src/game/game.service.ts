@@ -54,7 +54,7 @@ export class GameService {
 	}
 
 	startGame(lobby: Lobby, p2: string, server: Server) {
-		const game = new Game(lobby.id, lobby.p1.id, p2)
+		const game = new Game(lobby.id, lobby.p1.id, p2, lobby.editor)
 		this.gameManager[game.id] = game
 		delete this.lobbyManager[game.id]
 		// eslint-disable-next-line prefer-const

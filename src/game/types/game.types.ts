@@ -15,6 +15,10 @@ export interface AvailableMoves {
 	left: boolean
 }
 
+export interface EditorObject extends Coordinates {
+	type: TypeGameBLock
+}
+
 export type TypeEnemyTank = 'NORMAL' | 'SPEEDY' | 'HEAVY'
 export type TypePlayerTank = 'LVL_0' | 'LVL_1' | 'LVL_2' | 'LVL_3'
 
