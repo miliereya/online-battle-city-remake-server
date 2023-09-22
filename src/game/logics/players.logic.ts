@@ -1,6 +1,5 @@
-import { Game } from '../init/game.init'
-import { isPlayerCanMove, isPlayerCanShoot } from '../utils'
-import { isPlayerAlive } from '../utils/tank.utils'
+import { Game } from '../init'
+import { isPlayerCanMove, isPlayerCanShoot, isPlayerDead } from '../utils'
 
 const playerFrameLogic = (game: Game, num: 1 | 2) => {
 	const p = num === 1 ? game.p1 : game.p2
@@ -42,7 +41,7 @@ const playerFrameLogic = (game: Game, num: 1 | 2) => {
 			p.direction = move
 		} else {
 			const busyCoordinates = [...enemies, ...objects]
-			if (isPlayerAlive(pAnother)) busyCoordinates.push(pAnother)
+			if (!isPlayerDead(pAnother)) busyCoordinates.push(pAnother)
 			p.move(busyCoordinates)
 		}
 		sounds.player_move = true

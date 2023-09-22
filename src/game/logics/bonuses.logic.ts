@@ -1,6 +1,5 @@
-import { Game } from '../init/game.init'
-import { deleteBonus } from '../utils'
-import { hitEnemy } from '../utils/tank.utils'
+import { Game } from '../init'
+import { deleteBonus, hitEnemy } from '../utils'
 
 export const bonusesFrameLogic = (game: Game) => {
 	const { bonuses, p1, p2, enemies, timerBonus, sounds } = game

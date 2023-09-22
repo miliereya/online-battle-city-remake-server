@@ -13,7 +13,7 @@ import { Tank } from './tank.init'
 import { generateBonuses } from '../utils'
 import { maps as mapsBlank } from '../maps'
 import { Map } from '../types'
-import { EditorMap } from '../maps/editor'
+import { EditorMap } from '../maps'
 
 export class Game {
 	id: string

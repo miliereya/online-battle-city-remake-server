@@ -1,52 +1,6 @@
-import { Bang, Bonus, Game, Player, Tank } from '../init'
-import { AvailableMoves, BusyCoordinates, TypeDirection } from '../types'
+import { Bang, Bonus, Game, Tank } from '../init'
+import { TypeDirection } from '../types'
 import { mutationFilter } from './array.utils'
-import { getSideCoordinates } from './coordinates.utils'
-
-export const addTankCoordinates = (
-	tank: Tank,
-	busyCoordinates: BusyCoordinates[]
-) => {
-	if (tank.deathCooldown) return
-	getSideCoordinates(
-		busyCoordinates,
-		15,
-		tank,
-		{ byI: '+', extraCalc: '-7' },
-		{ extraCalc: '-7' }
-	)
-	getSideCoordinates(
-		busyCoordinates,
-		15,
-		tank,
-		{ byI: '+', extraCalc: '-7' },
-		{ extraCalc: '+7' }
-	)
-	getSideCoordinates(
-		busyCoordinates,
-		15,
-		tank,
-		{ extraCalc: '-7' },
-		{ byI: '+', extraCalc: '-7' }
-	)
-	getSideCoordinates(
-		busyCoordinates,
-		15,
-		tank,
-		{ extraCalc: '+7' },
-		{ byI: '+', extraCalc: '-7' }
-	)
-}
-
-export const addTanksCoordinates = (
-	tanks: Tank[],
-	busyCoordinates: BusyCoordinates[]
-) => {
-	for (let i = 0; i < tanks.length; i++) {
-		if (tanks[i].lives === 0) return
-		addTankCoordinates(tanks[i], busyCoordinates)
-	}
-}
 
 export const killPlayer = (id: string, game: Game) => {
 	const p = game.p1.id === id ? game.p1 : game.p2
@@ -63,7 +17,7 @@ export const hitEnemy = (
 	initiatedByGrenade = false
 ) => {
 	const enemy = game.enemies.find((e: Tank) => e.id === id)
-	if (!enemy || enemy.spawnAnimation) return false
+	if (!enemy || (enemy.spawnAnimation && !initiatedByGrenade)) return false
 	enemy.lives--
 	if (enemy.lives === 0) {
 		if (game.enemies.length > 2 && game.enemySpawnCooldown > 20)
@@ -105,63 +59,4 @@ export const generateNextMoves = () => {
 		repeat: Math.floor(Math.random() * 20 + 10),
 		direction,
 	}
-}
-
-export const getTankPosition = (tank: Tank) => ({
-	y: tank.coordinateY,
-	x: tank.coordinateX,
-	direction: tank.direction,
-})
-export const isPlayerAlive = (p: Player) => {
-	return p.lives && !p.deathCooldown ? true : false
-}
-
-export const getTankAvailableMoves = (
-	busyCoordinates: BusyCoordinates[],
-	direction: TypeDirection,
-	x: number,
-	y: number
-): AvailableMoves => {
-	const availableMoves = {
-		top: y < 200 && direction === 'TOP',
-		bottom: y > 7 && direction === 'BOTTOM',
-		right: x < 200 && direction === 'RIGHT',
-		left: x > 7 && direction === 'LEFT',
-	}
-	for (let i = 0; i < busyCoordinates.length; i++) {
-		const coX = busyCoordinates[i].coordinateX
-		const coY = busyCoordinates[i].coordinateY
-		if (availableMoves.top && coY === y + 8 && coX > x - 8 && coX < x + 8) {
-			availableMoves.top = false
-			continue
-		}
-		if (
-			availableMoves.bottom &&
-			coY === y - 8 &&
-			coX > x - 8 &&
-			coX < x + 8
-		) {
-			availableMoves.bottom = false
-			continue
-		}
-		if (
-			availableMoves.right &&
-			coX === x + 8 &&
-			coY > y - 8 &&
-			coY < y + 8
-		) {
-			availableMoves.right = false
-			continue
-		}
-		if (
-			availableMoves.left &&
-			coX === x - 8 &&
-			coY > y - 8 &&
-			coY < y + 8
-		) {
-			availableMoves.left = false
-			continue
-		}
-	}
-	return availableMoves
 }

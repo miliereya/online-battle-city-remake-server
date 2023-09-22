@@ -1,6 +1,4 @@
-import { Bang } from '../init/bang.init'
-import { Bullet } from '../init/bullet.init'
-import { Game } from '../init/game.init'
+import { Bang, Bullet, Game } from '../init'
 import { BusyCoordinates } from '../types'
 import {
 	isBulletHitBullet,
@@ -8,10 +6,12 @@ import {
 	isBulletHitTank,
 	isEnemy,
 	isPlayer,
+	isPlayerDead,
+	mutationFilter,
+	hitEnemy,
+	killPlayer,
+	deleteBlock,
 } from '../utils'
-import { mutationFilter } from '../utils/array.utils'
-import { deleteBlock } from '../utils/blocks.utils'
-import { hitEnemy, isPlayerAlive, killPlayer } from '../utils/tank.utils'
 
 export const bulletsFrameLogic = (game: Game) => {
 	const { bullets, objects, p1, p2, enemies, sounds, bangs } = game
@@ -21,11 +21,11 @@ export const bulletsFrameLogic = (game: Game) => {
 		...objects,
 	]
 	const allTanks = [...enemies]
-	if (isPlayerAlive(p1)) {
+	if (!isPlayerDead(p1)) {
 		busyCoordinates.push(p1)
 		allTanks.push(p1)
 	}
-	if (isPlayerAlive(p2)) {
+	if (!isPlayerDead(p2)) {
 		busyCoordinates.push(p2)
 		allTanks.push(p2)
 	}

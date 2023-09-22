@@ -1,5 +1,5 @@
-import { Game } from '../init/game.init'
-import { isPlayerAlive } from '../utils/tank.utils'
+import { Game } from '../init'
+import { isPlayerDead } from '../utils'
 
 export const enemiesSpawnLogic = (game: Game) => {
 	const {
@@ -9,16 +9,18 @@ export const enemiesSpawnLogic = (game: Game) => {
 		p1,
 		p2,
 		enemySpawnPosition,
+		timerBonus,
 	} = game
 	if (enemies.length === 4 || enemyList.length === 0) return
 
 	if (enemySpawnCooldown !== 0) {
 		return game.enemySpawnCooldown--
 	}
+	if (timerBonus) return
 
 	const busyCoordinates = [...enemies]
-	if (isPlayerAlive(p1)) busyCoordinates.push(p1)
-	if (isPlayerAlive(p2)) busyCoordinates.push(p2)
+	if (!isPlayerDead(p1)) busyCoordinates.push(p1)
+	if (!isPlayerDead(p2)) busyCoordinates.push(p2)
 
 	let isMiddleFree = true
 	let isRightFree = true
@@ -85,8 +87,8 @@ export const enemiesFrameLogic = (game: Game) => {
 					...enemies.filter((e) => e.id !== id),
 					...objects,
 				]
-				if (isPlayerAlive(p1)) busyCoordinates.push(p1)
-				if (isPlayerAlive(p2)) busyCoordinates.push(p2)
+				if (!isPlayerDead(p1)) busyCoordinates.push(p1)
+				if (!isPlayerDead(p2)) busyCoordinates.push(p2)
 
 				enemy.move(busyCoordinates)
 			}

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import {
-	DeleteLobbyDto,
 	GameActions,
 	GameManager,
 	Lobby,
@@ -29,28 +28,33 @@ export class GameService {
 	gameManager: GameManager = {}
 
 	createLobby(dto: CreateLobbyDto) {
+		if (this.lobbyManager[dto.name]) return
 		const lobby = {
 			...dto,
 			id: uuid4(),
+			expireMinute: Settings.lobbyExpireMinute,
 		}
-		this.lobbyManager[lobby.id] = lobby
+		this.lobbyManager[lobby.name] = lobby
+		setTimeout(
+			() => {
+				delete this.lobbyManager[lobby.name]
+			},
+			Settings.lobbyExpireMinute * 1000 * 60
+		)
+
 		return publicLobbyData([lobby])[0]
 	}
 
-	findLobbies() {
-		return publicLobbyData(Object.values(this.lobbyManager))
-	}
-
 	joinLobby(dto: JoinLobbyDto, server: Server) {
-		const lobby = this.lobbyManager[dto.id]
+		const lobby = this.lobbyManager[dto.name]
+		if (!lobby) return
 		lobby.p1.join(lobby.id)
 		dto.p2.join(lobby.id)
 		this.startGame(lobby, dto.p2.id, server)
 	}
 
-	deleteLobby(dto: DeleteLobbyDto) {
-		delete this.lobbyManager[dto.id]
-		return 'lobby deleted'
+	deleteLobby(name: string) {
+		delete this.lobbyManager[name]
 	}
 
 	startGame(lobby: Lobby, p2: string, server: Server) {
@@ -65,6 +69,12 @@ export class GameService {
 		gameInterval = setInterval(
 			() => this.frameGame(game, server, clearGameInterval),
 			Settings.frameRate
+		)
+		setTimeout(
+			() => {
+				game.isEnded = true
+			},
+			Settings.gameExpireMinute * 1000 * 60
 		)
 	}
 
@@ -97,6 +107,7 @@ export class GameService {
 		if (isEnded) {
 			delete this.gameManager[id]
 			clearGameInterval()
+			server.to(id).emit(GameActions.ended, 'Game ended')
 		}
 	}
 

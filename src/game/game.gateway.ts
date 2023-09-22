@@ -18,7 +18,6 @@ import { CreateLobbyDto, InputDto } from './dto'
 })
 export class GameGateway {
 	constructor(private readonly gameService: GameService) {}
-
 	@WebSocketServer()
 	server: Server
 
@@ -30,18 +29,25 @@ export class GameGateway {
 		return this.gameService.createLobby({
 			p1,
 			name: dto.name,
+			settings: dto.settings,
 			editor: dto.editor,
 		})
 	}
 
-	@SubscribeMessage(LobbyActions.find)
-	findLobbies() {
-		return this.gameService.findLobbies()
+	@SubscribeMessage(LobbyActions.ping)
+	ping() {
+		return new Date().getTime()
 	}
 
 	@SubscribeMessage(LobbyActions.join)
-	joinLobby(@ConnectedSocket() p2: Socket, @MessageBody() id: string) {
-		this.gameService.joinLobby({ p2, id }, this.server)
+	joinLobby(@ConnectedSocket() p2: Socket, @MessageBody() name: string) {
+		this.gameService.joinLobby({ p2, name }, this.server)
+	}
+
+	@SubscribeMessage(LobbyActions.delete)
+	deleteLobby(@MessageBody() name: string) {
+		console.log(name)
+		this.gameService.deleteLobby(name)
 	}
 
 	@SubscribeMessage(GameActions.input)

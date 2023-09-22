@@ -1,6 +1,4 @@
-import { Bonus } from '../init/bonus.init'
-import { BusyCoordinates, EnemyList } from '../types'
-import { getSideCoordinates } from './coordinates.utils'
+import { EnemyList } from '../types'
 
 export const generateBonuses = (enemyList: EnemyList[]) => {
 	let prevVal = 0
@@ -37,34 +35,4 @@ export const generateBonusCoordinates = () => {
 		x: Math.floor(Math.random() * 187 + 10),
 		y: Math.floor(Math.random() * 187 + 10),
 	}
-}
-
-export const getBonusCoordinates = (bonus: Bonus) => {
-	const bonusCoordinates: BusyCoordinates[] = []
-	getSideCoordinates(bonusCoordinates, 15, bonus, {
-		byI: '+',
-	})
-	getSideCoordinates(
-		bonusCoordinates,
-		15,
-		bonus,
-		{
-			byI: '+',
-		},
-		{ extraCalc: '+14' }
-	)
-	getSideCoordinates(bonusCoordinates, 14, bonus, undefined, {
-		byI: '+',
-	})
-	getSideCoordinates(
-		bonusCoordinates,
-		14,
-		bonus,
-		{ extraCalc: '+15' },
-		{
-			byI: '+',
-		}
-	)
-
-	return bonusCoordinates
 }

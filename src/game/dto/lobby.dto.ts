@@ -1,14 +1,15 @@
 import { Socket } from 'socket.io'
-import { EditorObject, Lobby } from '../types'
+import { EditorObject, GameSettings, Lobby } from '../types'
 
 export interface CreateLobbyDto {
 	name: string
 	p1: Socket
+	settings: GameSettings
 	editor?: EditorObject[]
 }
 
 export interface JoinLobbyDto {
-	id: string
+	name: string
 	p2: Socket
 }
 

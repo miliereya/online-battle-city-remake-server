@@ -1,4 +1,4 @@
-import { Game } from '../init/game.init'
+import { Game } from '../init'
 
 export const animationsFrameLogic = (game: Game) => {
 	const { bangs } = game
