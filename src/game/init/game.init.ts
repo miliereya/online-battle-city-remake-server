@@ -5,13 +5,14 @@ import {
 	Controls,
 	EditorObject,
 	EnemyList,
+	GameSettings,
 	TypeEnemySpawnPosition,
 } from '../types'
 import { Bonus } from './bonus.init'
 import { Bang } from './bang.init'
 import { Tank } from './tank.init'
 import { generateBonuses } from '../utils'
-import { maps as mapsBlank } from '../maps'
+import { getHardcoreList, maps as mapsBlank } from '../maps'
 import { Map } from '../types'
 import { EditorMap } from '../maps'
 
@@ -52,10 +53,28 @@ export class Game {
 	isEnded = false
 	p1Controls: Controls = { fire: false, move: null, pause: false }
 	p2Controls: Controls = { fire: false, move: null, pause: false }
-	constructor(id: string, p1: string, p2: string, editor?: EditorObject[]) {
+	settings: GameSettings
+	constructor(
+		id: string,
+		p1: string,
+		p2: string,
+		settings: GameSettings,
+		editor?: EditorObject[]
+	) {
 		this.id = id
-		this.p1 = new Player('left', p1)
-		this.p2 = new Player('right', p2)
+		this.settings = settings
+		this.p1 = new Player(
+			'left',
+			p1,
+			this.settings.playerLevel,
+			this.settings.hardcore
+		)
+		this.p2 = new Player(
+			'right',
+			p2,
+			this.settings.playerLevel,
+			this.settings.hardcore
+		)
 		this.editor = editor
 	}
 
@@ -103,8 +122,10 @@ export class Game {
 		this.enemySpawnPosition = 'middle'
 		this.timerBonus = 0
 		this.p1.reset()
-		this.p2.reset()
-		this.enemyList = generateBonuses(map.enemyList)
+		if (this.p2) this.p2.reset()
+		this.enemyList = generateBonuses(
+			this.settings.hardcore ? getHardcoreList() : map.enemyList
+		)
 		this.sounds.level_start = true
 	}
 

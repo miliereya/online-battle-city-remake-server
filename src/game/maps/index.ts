@@ -1,3 +1,4 @@
+import { EnemyList } from '../types'
 import { Map1 } from './1'
 import { Map10 } from './10'
 import { Map2 } from './2'
@@ -24,3 +25,26 @@ export const maps = {
 
 export * from './editor'
 export * from './map-instance'
+
+export const getHardcoreList = (): EnemyList[] => [
+	{ type: 'HEAVY' },
+	{ type: 'HEAVY' },
+	{ type: 'SPEEDY' },
+	{ type: 'SPEEDY' },
+	{ type: 'HEAVY' },
+	{ type: 'HEAVY' },
+	{ type: 'SPEEDY' },
+	{ type: 'SPEEDY' },
+	{ type: 'HEAVY' },
+	{ type: 'HEAVY' },
+	{ type: 'SPEEDY' },
+	{ type: 'SPEEDY' },
+	{ type: 'HEAVY' },
+	{ type: 'HEAVY' },
+	{ type: 'SPEEDY' },
+	{ type: 'SPEEDY' },
+	{ type: 'HEAVY' },
+	{ type: 'HEAVY' },
+	{ type: 'SPEEDY' },
+	{ type: 'SPEEDY' },
+]

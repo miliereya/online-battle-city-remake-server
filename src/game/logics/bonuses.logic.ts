@@ -1,5 +1,5 @@
-import { Game } from '../init'
-import { deleteBonus, hitEnemy } from '../utils'
+import { Game, Tank } from '../init'
+import { deleteBonus, mutationFilter } from '../utils'
 
 export const bonusesFrameLogic = (game: Game) => {
 	const { bonuses, p1, p2, enemies, timerBonus, sounds } = game
@@ -32,12 +32,10 @@ export const bonusesFrameLogic = (game: Game) => {
 					}
 					break
 				case 'HP':
-					if (p.lives < 3) p.lives++
+					if (!game.settings.hardcore && p.lives < 3) p.lives++
 					break
 				case 'GRENADE':
-					while (enemies.length) {
-						hitEnemy(enemies[0].id, game)
-					}
+					mutationFilter(enemies, (e: Tank) => e.spawnAnimation)
 					break
 				case 'HELMET':
 					p.helmet = 200

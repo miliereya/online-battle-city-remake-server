@@ -29,7 +29,8 @@ export class Tank extends Coordinates {
 		side: TypeEnemySpawnPosition,
 		type: TypeTank,
 		id?: string,
-		bonus?: TypeBonus
+		bonus?: TypeBonus,
+		isHardcore?: boolean
 	) {
 		let x: number
 		const y = id ? 7 : 200
@@ -49,7 +50,7 @@ export class Tank extends Coordinates {
 		this.direction = id ? 'TOP' : 'BOTTOM'
 		this.type = type
 		this.speed = type === 'SPEEDY' ? 2 : 1
-		this.lives = type === 'HEAVY' || id ? 3 : 1
+		this.lives = type === 'HEAVY' || (id && !isHardcore) ? 3 : 1
 		this.bonus = bonus
 
 		type === 'LVL_2'

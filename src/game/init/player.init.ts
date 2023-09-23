@@ -3,8 +3,13 @@ import { Tank } from './tank.init'
 export class Player extends Tank {
 	helmet = 120
 	num: 1 | 2
-	constructor(side: 'left' | 'right', id: string) {
-		super(side, 'LVL_0', id)
+	constructor(
+		side: 'left' | 'right',
+		id: string,
+		playerLevel: 0 | 1 | 2 | 3,
+		isHardcore: boolean
+	) {
+		super(side, `LVL_${playerLevel}`, id, undefined, isHardcore)
 		this.num = side === 'left' ? 1 : 2
 	}
 

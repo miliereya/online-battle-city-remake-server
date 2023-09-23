@@ -80,7 +80,10 @@ export const bulletsFrameLogic = (game: Game) => {
 				}
 
 				if (isPlayer(type) && isBulletHitTank(busyX, busyY, x, y)) {
-					if (isEnemy(shooter)) {
+					if (
+						isEnemy(shooter) ||
+						(game.settings.friendlyFire && shooterId !== id)
+					) {
 						killPlayer(id, game)
 					}
 					if (id !== shooterId) willHit = true
