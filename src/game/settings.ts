@@ -1,5 +1,5 @@
 export const Settings = {
-	frameRate: 18,
+	frameRate: 25,
 	lobbyExpireMinute: 5,
 	gameExpireMinute: 120,
 }
