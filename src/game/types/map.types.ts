@@ -1,5 +1,5 @@
 import { Coordinates, TypeBonus, TypeEnemyTank, TypeGameBLock } from '.'
-import { GameObject } from '../init'
+import { GameObject } from '../instances'
 
 export interface EnemyList {
 	type: TypeEnemyTank

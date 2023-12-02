@@ -1,4 +1,4 @@
-import { GameObject } from '../init'
+import { GameObject } from '../instances'
 
 export const MapInstance = () => {
 	return [

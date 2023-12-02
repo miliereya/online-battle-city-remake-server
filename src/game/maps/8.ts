@@ -1,4 +1,4 @@
-import { GameObject } from '../init'
+import { GameObject } from '../instances'
 import { Map } from '../types'
 import { MapInstance } from './map-instance'
 

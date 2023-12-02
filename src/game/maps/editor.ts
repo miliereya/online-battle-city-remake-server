@@ -1,7 +1,7 @@
 import { EditorObject } from '../types'
 import { MapInstance } from './map-instance'
 import { Map } from '../types'
-import { GameObject } from '../init'
+import { GameObject } from '../instances'
 
 export const EditorMap = (editor: EditorObject[]): Map => {
 	const editorGameObjects: GameObject[] = []

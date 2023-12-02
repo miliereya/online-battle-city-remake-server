@@ -1,4 +1,4 @@
-import { Tank } from './tank.init'
+import { Tank } from './tank.instance'
 
 export class Player extends Tank {
 	helmet = 120

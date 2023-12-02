@@ -1,4 +1,4 @@
-import { Game } from '../init'
+import { Game } from '../instances'
 import { isPlayerCanMove, isPlayerCanShoot, isPlayerDead } from '../utils'
 
 const playerFrameLogic = (game: Game, num: 1 | 2) => {

@@ -1,4 +1,4 @@
-import { Bang, Game, Tank } from '../init'
+import { Bang, Game, Tank } from '../instances'
 import { deleteBonus, mutationFilter } from '../utils'
 
 export const bonusesFrameLogic = (game: Game) => {

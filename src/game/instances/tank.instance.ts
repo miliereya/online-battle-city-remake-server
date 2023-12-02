@@ -7,7 +7,7 @@ import {
 	TypeTank,
 } from '../types'
 import { isEnemy, isImpassibleGameObject, isTank } from '../utils'
-import { Coordinates } from './coordinates.init'
+import { Coordinates } from './coordinates.instance'
 import { v4 as uuid4 } from 'uuid'
 
 export class Tank extends Coordinates {

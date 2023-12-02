@@ -1,4 +1,4 @@
-import { Game } from '../init'
+import { Game } from '../instances'
 import { isPlayerDead } from '../utils'
 
 export const enemiesSpawnLogic = (game: Game) => {

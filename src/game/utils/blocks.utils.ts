@@ -1,4 +1,4 @@
-import { GameObject } from '../init'
+import { GameObject } from '../instances'
 import { mutationFilter } from '.'
 
 export const deleteBlock = (id: string, objects: GameObject[]) => {

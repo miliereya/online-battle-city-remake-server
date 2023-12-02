@@ -13,7 +13,7 @@ import { CreateLobbyDto, InputDto } from './dto'
 @WebSocketGateway({
 	cors: {
 		credentials: true,
-		origin: 'https://portfolio-client-eosin.vercel.app',
+		origin: process.env.CLIENT_URL,
 	},
 })
 export class GameGateway {
@@ -27,10 +27,8 @@ export class GameGateway {
 		@MessageBody() dto: CreateLobbyDto
 	) {
 		return this.gameService.createLobby({
+			...dto,
 			p1,
-			name: dto.name,
-			settings: dto.settings,
-			editor: dto.editor,
 		})
 	}
 
@@ -46,7 +44,6 @@ export class GameGateway {
 
 	@SubscribeMessage(LobbyActions.delete)
 	deleteLobby(@MessageBody() name: string) {
-		console.log(name)
 		this.gameService.deleteLobby(name)
 	}
 

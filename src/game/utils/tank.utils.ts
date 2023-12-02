@@ -1,4 +1,4 @@
-import { Bang, Bonus, Game, Tank } from '../init'
+import { Bang, Bonus, Game, Tank } from '../instances'
 import { TypeDirection } from '../types'
 import { mutationFilter } from './array.utils'
 

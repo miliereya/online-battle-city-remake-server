@@ -1,4 +1,4 @@
-import { Bang, Bullet, Game } from '../init'
+import { Bang, Bullet, Game } from '../instances'
 import { BusyCoordinates } from '../types'
 import {
 	isBulletHitBullet,

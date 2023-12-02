@@ -1,4 +1,4 @@
-import { Game } from '../init'
+import { Game } from '../instances'
 import { isGameOver } from '../utils'
 
 export const gameStatusFrameLogic = (game: Game) => {

@@ -1,6 +1,6 @@
-import { GameObject } from './game-object.init'
-import { Player } from './player.init'
-import { Bullet } from './bullet.init'
+import { GameObject } from './game-object.instance'
+import { Player } from './player.instance'
+import { Bullet } from './bullet.instance'
 import {
 	Controls,
 	EditorObject,
@@ -8,9 +8,9 @@ import {
 	GameSettings,
 	TypeEnemySpawnPosition,
 } from '../types'
-import { Bonus } from './bonus.init'
-import { Bang } from './bang.init'
-import { Tank } from './tank.init'
+import { Bonus } from './bonus.instance'
+import { Bang } from './bang.instance'
+import { Tank } from './tank.instance'
 import { generateBonuses } from '../utils'
 import { getHardcoreList, maps as mapsBlank } from '../maps'
 import { Map } from '../types'

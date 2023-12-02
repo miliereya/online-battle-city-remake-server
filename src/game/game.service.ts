@@ -9,18 +9,9 @@ import {
 import { v4 as uuid4 } from 'uuid'
 import { Server } from 'socket.io'
 import { CreateLobbyDto, InputDto, JoinLobbyDto, publicLobbyData } from './dto'
-import { Settings } from './settings'
-import { Game } from './init'
-import {
-	animationsFrameLogic,
-	bonusesFrameLogic,
-	bulletsFrameLogic,
-	enemiesFrameLogic,
-	enemiesSpawnLogic,
-	gameStatusFrameLogic,
-	levelFrameLogic,
-	playersFrameLogic,
-} from './logics'
+import { Settings } from './config/settings'
+import { Game } from './instances'
+import { gameFrame } from './logics'
 
 @Injectable()
 export class GameService {
@@ -73,7 +64,7 @@ export class GameService {
 			clearInterval(gameInterval)
 		}
 		gameInterval = setInterval(
-			() => this.frameGame(game, server, clearGameInterval),
+			() => this.frame(game, server, clearGameInterval),
 			Settings.frameRate
 		)
 		setTimeout(
@@ -84,29 +75,9 @@ export class GameService {
 		)
 	}
 
-	frameGame(game: Game, server: Server, clearGameInterval: () => void) {
-		const {
-			levelChangeAnimation,
-			gameOverAnimation,
-			isPaused,
-			id,
-			isEnded,
-		} = game
-		game.resetSounds()
-		levelFrameLogic(game)
-		gameStatusFrameLogic(game)
-		if (!levelChangeAnimation) {
-			if (!gameOverAnimation) {
-				playersFrameLogic(game)
-			}
-			if (!isPaused) {
-				bonusesFrameLogic(game)
-				bulletsFrameLogic(game)
-				enemiesSpawnLogic(game)
-				enemiesFrameLogic(game)
-				animationsFrameLogic(game)
-			}
-		}
+	frame(game: Game, server: Server, clearGameInterval: () => void) {
+		gameFrame(game)
+		const { id, isEnded } = game
 		server
 			.to(id)
 			.emit(GameActions.frame, { game, timeSent: new Date().getTime() })

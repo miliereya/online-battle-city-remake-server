@@ -1,4 +1,4 @@
-import { Game, Player } from '../init'
+import { Game, Player } from '../instances'
 import { TypeObject, TypeTank } from '../types'
 
 export const isEnemy = (type: TypeTank | TypeObject) =>

@@ -1,4 +1,4 @@
-import { Game } from '../init'
+import { Game } from '../instances'
 
 export interface GameManager {
 	[key: string]: Game

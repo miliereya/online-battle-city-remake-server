@@ -1,6 +1,6 @@
 import { v4 as uuid4 } from 'uuid'
 import { TypeDirection, TypeTank } from '../types'
-import { Coordinates } from './coordinates.init'
+import { Coordinates } from './coordinates.instance'
 
 export class Bullet extends Coordinates {
 	direction: TypeDirection
