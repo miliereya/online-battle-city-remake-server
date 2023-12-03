@@ -13,7 +13,7 @@ import { CreateLobbyDto, InputDto } from './dto'
 @WebSocketGateway({
 	cors: {
 		credentials: true,
-		origin: process.env.CLIENT_URL,
+		origin: 'https://battle-city-remake.online',
 	},
 })
 export class GameGateway {
